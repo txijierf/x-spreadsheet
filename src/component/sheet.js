@@ -16,6 +16,7 @@ import SortFilter from './sort_filter';
 import { xtoast } from './message';
 import { cssPrefix } from '../config';
 import { formulas } from '../core/formula';
+import Notes from './note'
 
 /**
  * @desc throttle fn
@@ -581,6 +582,7 @@ function sheetInitEvents() {
     toolbar,
     modalValidation,
     modalMOHValidation,
+    notes,
     modalConditional,
     sortFilter,
   } = this;
@@ -675,6 +677,10 @@ function sheetInitEvents() {
       modalValidation.setValue(this.data.getSelectedValidation());
     } else if (type === 'moh-validation') {
       modalMOHValidation.setValue(this.data.getSelectedValidation());
+    } else if (type === 'comment') {
+      // open comment and set text(?)
+      console.log('open comment herrre')
+      notes.showNote(...this.selector.indexes)
     } else if (type === 'copy') {
       copy.call(this);
     } else if (type === 'cut') {
@@ -882,6 +888,8 @@ export default class Sheet {
     this.modalValidation = new ModalValidation();
     // MOH validation
     this.modalMOHValidation = new ModalMOHValidation();
+    // Notes store
+    this.notes = new Notes(() => this.getRect(), () => this.selector.l.areaEl.el);
     // modal for conditional formatting
     // different modals depending on required values
     this.modalConditional = new ModalConditional(this.data);
@@ -910,6 +918,7 @@ export default class Sheet {
       this.modalValidation.el,
       this.modalMOHValidation.el,
       this.modalConditional.el,
+      this.notes.el,
       this.sortFilter.el,
     );
     // table
