@@ -198,7 +198,7 @@ export default class ModalMOHValidation extends Modal {
       }
       
 
-      
+      console.log("hi we are saving");
       
       this.spread.datas[this.spread.getCurrentSheetIndex()].addGDCTValidaton(this.cellRange,type,{operator,value});
       
