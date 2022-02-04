@@ -5,27 +5,41 @@ import { cssPrefix } from '../config';
 import { bind, unbind } from './event';
 
 export default class Notes {
-    constructor(viewFn, getSelectBox) {
-        this.viewFn = viewFn
-        this.getSelectBox = getSelectBox
-        this.notes = {} // {"ri-ci": "comment"}
-        this.updateCBs = [] // array of functions to call on update
-        this.el = h('div', `${cssPrefix}-note`).on('mouseleave', () => this.hideEl()).hide()
+    constructor(viewFn, getSelectBox, getSelectedIndexes) {
+        this.viewFn = viewFn;
+        this.getSelectBox = getSelectBox;
+        this.getSelectedIndexes = getSelectedIndexes;
+        this.notes = {}; // {"ri-ci": "comment"}
+        this.updateCBs = []; // array of functions to call on update
+        this.el = h('div', `${cssPrefix}-note`).on('mouseleave', () => this.hideEl()).hide();
+        this.activeIndexes = [-1, -1];
     }
 
-    getNote(ri, ci) {
-        return this.notes[`${ri}-${ci}`] || ""
+    addUpdateCBs(cb) {
+        this.updateCBs.push(cb)
     }
 
-    setNote(ri, ci, note) {
-        this.notes[`${ri}-${ci}`] = note
+    runCBs(action, ri, ci, newNote) {
         for (let cb of this.updateCBs) {
-            cb(ri, ci)
+            cb(action, ri, ci, newNote)
         }
     }
 
+    getNote(ri, ci) {
+        return this.notes[`${ri}-${ci}`] || "";
+    }
+
+    setNote(ri, ci, note) {
+        this.notes[`${ri}-${ci}`] = note;
+        this.runCBs('update', ri, ci, note)
+    }
+
+    hasNote(ri, ci) {
+        return this.getNote(ri, ci) !== "";
+    }
+
     showNote(ri, ci) {
-        console.log('selection', this.getSelectBox())
+        this.activeIndexes = [ri, ci]
         // remove any previous children of el
         for (let child of this.el.children()) {
             this.el.removeChild(child)
@@ -46,13 +60,14 @@ export default class Notes {
 
     clearNote(ri, ci) {
         this.setNote(ri, ci, "")
+        this.runCBs('delete', ri, ci, "")
     }
 
     hideEl() {
-        if (![...this.el.children()].includes(document.activeElement)) {
+        const [sri, sci] = this.getSelectedIndexes()
+        const [ari ,aci] = this.activeIndexes
+        if (![...this.el.children()].includes(document.activeElement) && (sri !== ari || sci !== aci)) {
             this.el.hide()
-        } else {
-            console.log('ac', document.activeElement)
         }
     }
 }
