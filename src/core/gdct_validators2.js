@@ -28,7 +28,7 @@ export class GDCTValidators2{
         
         attrList.forEach(attr => {
             catList.forEach(cat => {
-                let key = `${attr}-${cat}`;
+                let key = `${attr}_${cat}`;
                 if(this.validators[key] != undefined){
                     this.validators[key].push({type,vInfo});
                 }
@@ -45,7 +45,7 @@ export class GDCTValidators2{
 
     validateAll(){
         for(var key in this.validators){
-            let attr_cat = key.split(`-`);
+            let attr_cat = key.split(`_`);
             this.validators[key].forEach(valData =>{
                 this.validate(attr_cat[0], attr_cat[1],valData);
             });
@@ -58,9 +58,10 @@ export class GDCTValidators2{
         let y = Number(this.datas.rows.findInputColOnRow(this.search_row,attr));
         
         let x = Number(this.findCategoryRow(cat));
+        
         if(isNaN(x) || isNaN(y)){return;}
 
-        console.log("validating cell %d %d",x,y)
+        console.log("validating cell %d %d for attr %s cat %s",x,y,attr,cat)
         console.log(this.datas)
         if(type === 'number'){
             let t = this.datas.getCell(x,y);
