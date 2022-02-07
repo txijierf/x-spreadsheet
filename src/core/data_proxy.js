@@ -14,6 +14,7 @@ import { CellRange } from './cell_range';
 import { expr2xy, xy2expr } from './alphabet';
 import { t } from '../locale/locale';
 import { GDCTValidators } from './gdct_validators';
+import { GDCTValidators2 } from './gdct_validators2';
 // for conditional formatting
 import ConditionFormatter, { styles } from './conditionformatter'
 
@@ -338,6 +339,7 @@ export default class DataProxy {
     this.cols = new Cols(this.settings.col);
     this.validations = new Validations();
     this.GDCTValidators = new GDCTValidators(this, spread);
+    this.GDCTValidators2 = new GDCTValidators2(this,spread);
     //this.GDCTValidators.addTypeValidator(15, 2, '$')
     this.hyperlinks = {};
     this.comments = {};
@@ -919,6 +921,7 @@ export default class DataProxy {
         cell.merge[0] += rn;
         cell.merge[1] += cn;
       });
+      this.resetCommentsandErrors();
     });
   }
 
@@ -958,6 +961,7 @@ export default class DataProxy {
           delete cell.merge;
         }
       });
+      this.resetCommentsandErrors();
     });
   }
 
@@ -1085,7 +1089,8 @@ export default class DataProxy {
     }
     // validator
     
-    this.GDCTValidators.validateAll();
+    //this.GDCTValidators.validateAll();
+    this.GDCTValidators2.validateAll();
     validations.validate(ri, ci, text);
   }
 
@@ -1207,6 +1212,13 @@ export default class DataProxy {
         rows.setHide(ri, true);
       }
     }
+  }
+
+
+  resetCommentsandErrors(){
+    this.comments = {}
+    this.GDCTValidators2.clearErrors();
+    this.GDCTValidators2.validateAll();
   }
 
   // type: row | col

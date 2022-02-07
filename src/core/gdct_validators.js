@@ -120,7 +120,7 @@ export class GDCTValidators {
                     if(t.text != undefined) {
 
                         if(!this.validateAttribute(t.text,vInfo,x)){ 
-                            //console.log('error set for %d &d', x,y);
+                            console.log('error hhehehe set for %d &d', x,y);
                             this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`)
                             let sheet = this.spread.getSheet()
                             if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`); console.log("Note SETTT");}

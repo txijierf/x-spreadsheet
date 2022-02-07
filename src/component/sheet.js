@@ -612,7 +612,7 @@ function sheetInitEvents() {
         overlayerMousedown.call(this, evt);
         // console.log("offsetx %d offsety %d",evt.offsetX, evt.offsetY);
         // console.log(this.spread.datas[this.spread.getCurrentSheetIndex()].getSelectedRect());
-        notes.showNote(...this.selector.indexes,this.getSelectedRect())
+        notes.showNote(...this.selector.indexes,this.getSelectedRect(),evt.offsetX, evt.offsetY)
       }
     })
     .on('mousewheel.stop', (evt) => {
@@ -690,7 +690,7 @@ function sheetInitEvents() {
       console.log('open comment herrre' + this.selector.indexes)
       console.log(this.getSelectedRect())
       console.log(this.selector.indexes)
-      notes.showNote(...this.selector.indexes,this.getSelectedRect())
+      //notes.showNote(...this.selector.indexes,this.getSelectedRect())
     } else if (type === 'copy') {
       copy.call(this);
     } else if (type === 'cut') {

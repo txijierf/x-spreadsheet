@@ -95,6 +95,7 @@ export default class ModalMOHValidation extends Modal {
 
     this.attributeList = [];
     this.selectAttributelist= [];
+    this.selectCategories = [];
     this.max_value = max_value;
     this.min_value = min_value;
     this.attributeField = attributeField;
@@ -201,7 +202,7 @@ export default class ModalMOHValidation extends Modal {
       console.log("hi we are saving");
       
       this.spread.datas[this.spread.getCurrentSheetIndex()].addGDCTValidaton(this.cellRange,type,{operator,value});
-      
+      this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.addValidation(this.selectAttributelist,this.selectCategories,type, {operator,value})
       
       this.addValDesc(operator);
       
@@ -250,8 +251,6 @@ export default class ModalMOHValidation extends Modal {
         var c = spread_row.findInputColOnRow(9,attr_name);
         if(c != undefined){
           let desc_cell = this.spread.datas[this.spread.getCurrentSheetIndex()].getCell(1,c);
-          console.log("this should add to the cell")
-          console.log(c)
           if(desc_cell.text != undefined){
             this.spread.datas[this.spread.getCurrentSheetIndex()].setCellText(1,c,desc_cell.text + "For "+ this.categoryField.val() + desc + '\n');
           }else{
@@ -298,6 +297,7 @@ export default class ModalMOHValidation extends Modal {
     this.cellRange = cellR;
     var attr = ""; 
     var cat = "";
+    var catList = []
     var attrs = [];
     var attribute_data_row = this.spread.getRow(9);
 
@@ -317,11 +317,14 @@ export default class ModalMOHValidation extends Modal {
       let x = this.spread.getCell(i,1)
       if(x != undefined && x.text != undefined ){
         cat += this.spread.getCell(i,1).text+","
+        catList.push(this.spread.getCell(i,1).text);
       }
     }
 
     this.attributeField.val(attr);
     this.categoryField.val(cat);
+    this.selectAttributelist = attrs;
+    this.selectCategories = catList;
 
     return attrs;
   }
@@ -329,7 +332,7 @@ export default class ModalMOHValidation extends Modal {
   prepare(cellR){
     var attrList = this.getAttributeList();
     var selectedAttr = this.selectedAtrributesandCategories(cellR,attrList);
-    this.selectAttributelist = selectedAttr;
+    
     var nonselectedAttrs = attrList.filter(x => !(selectedAttr.includes(x)) );
     this.attributeList = attrList;
     this.valueField.input.setItems(nonselectedAttrs);
