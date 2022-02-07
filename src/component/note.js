@@ -40,7 +40,7 @@ export default class Notes {
         
         const { top, left, width } = x;
 
-        
+        console.log("note postiosn %d %d", ey, left)
 
         
         this.el.css('top', `${ey}px`).css('left', `${left+ width+2}px`)

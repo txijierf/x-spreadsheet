@@ -80,15 +80,14 @@ export class GDCTValidators2{
         }
         else if(type === 'attribute'){
             let t = this.datas.getCell(x,y);
-            console.log("validating...... %d %d ", x,y);
-            console.log(t);
+           
             if(t.text != undefined) {
                 console.log("hitting ", x,y);
                 if(!this.validateAttribute(t.text,vInfo,x)){ 
                     console.log('error set for %d &d', x,y);
                     this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`)
                     let sheet = this.spread.getSheet()
-                    if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`);}
+                    if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`); console.log("note sett for %d %d", x , y)}
                 }
                 else{
                     this.errors.delete(`${x}_${y}`);

@@ -242,7 +242,7 @@ export default class ModalMOHValidation extends Modal {
         break;
     }
 
-    //let rulesString = this.spread.cell(1,2);
+    
 
     let spread_row = this.spread.datas[this.spread.getCurrentSheetIndex()].rows;
 
@@ -261,13 +261,7 @@ export default class ModalMOHValidation extends Modal {
       })
     }
     
-    // if(rulesString == undefined){
-      
-    //   this.spread.cellText(1,2,cellrange + desc);
-    // }else{
-    //   this.spread.cellText(1,2,rulesString.text +'\n' +cellrange + desc);
-    // }
-
+   
     
 
   }
@@ -280,9 +274,8 @@ export default class ModalMOHValidation extends Modal {
     if(attribute_data_row === undefined){return a2;}
     Object.keys(attribute_data_row).forEach((key) =>{
       let x = attr_verifacion_row[key];
-      console.log("attr list ;"+  x.text )
-      if(x.text !=undefined  && (!isNaN(x.text))){
-        
+      if(x === undefined){}
+      else if(x.text !=undefined  && (!isNaN(x.text))){
         attribute_list.push({key: attribute_data_row[key].text , title: attribute_data_row[key].text});
         a2.push(attribute_data_row[key].text);
       }
