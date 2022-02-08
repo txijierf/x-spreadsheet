@@ -25,7 +25,7 @@ export default class Notes {
         }
     }
 
-    showNote(ri, ci, x, ex, ey) {
+    showNote(ri, ci, x) {
         // remove any previous children of el
         for (let child of this.el.children()) {
             this.el.removeChild(child)
@@ -35,15 +35,16 @@ export default class Notes {
             h('textarea', `${cssPrefix}-notetext`)
                 .on('change', (e) => this.setNote(ri, ci, e.target.value))
                 .on('blur', () => {if(text === ""){this.hideEl();}})
+                .on('mousewheel', () => {console.log('mouse wheel');this.hideEl();})
                 .children(text)
         )
         
         const { top, left, width } = x;
 
-        console.log("note postiosn %d %d", ey, left)
+        
 
         
-        this.el.css('top', `${ey}px`).css('left', `${left+ width+2}px`)
+        this.el.css('top', `${top + 290}px`).css('left', `${left+ width+90+2}px`)
         this.el.show()
         this.el.children()[0].focus()
       

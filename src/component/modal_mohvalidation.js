@@ -160,7 +160,13 @@ export default class ModalMOHValidation extends Modal {
       max_value.show();
      
       valueField.hide();
-    } else {
+    } 
+    else if(it === 'req'){
+      valueField.hide();
+      min_value.hide();
+      max_value.hide();
+    }
+    else {
       
       //attribute_selection.show();
       valueField.show();
@@ -207,6 +213,8 @@ export default class ModalMOHValidation extends Modal {
       this.addValDesc(operator);
       
       this.hide();
+      this.of.input.itemClick('req');
+      this.criteriaOperatorSelected('req');
     }
   }
 

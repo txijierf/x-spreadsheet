@@ -74,8 +74,9 @@ export class GDCTValidators2{
                     if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`); }
                 }
                 else{
-                    
                     this.errors.delete(`${x}_${y}`);
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.clearNote(x,y);}
                 }
             }
         }
@@ -98,6 +99,23 @@ export class GDCTValidators2{
                     
                 }
             }
+        }
+        else if(type === 'required'){
+
+            let t = this.datas.getCell(x,y);
+            if(t) {
+                if(t.text === undefined || t.text === ''){
+                    this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`)
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`); console.log("Note SETTT");}
+                }
+                else{
+                    this.errors.delete(`${x}_${y}`);
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.clearNote(x,y);}
+                }
+            }
+        
         }
 
     }
