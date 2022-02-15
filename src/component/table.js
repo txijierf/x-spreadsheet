@@ -102,7 +102,7 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0) {
       underline: style.underline,
     }, style.textwrap);
     // error
-    const error = data.validations.getError(rindex, cindex) || data.GDCTValidators2.getError(rindex, cindex);
+    const error = data.validations.getError(rindex, cindex) || data.GDCTValidators2.getError(rindex, cindex) || data.UnitValidation.getError(rindex, cindex);
     if (error) {
       //console.log("Error at the %d %d",rindex, cindex )
       draw.error(dbox);

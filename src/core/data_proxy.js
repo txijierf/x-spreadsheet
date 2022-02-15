@@ -15,6 +15,7 @@ import { expr2xy, xy2expr } from './alphabet';
 import { t } from '../locale/locale';
 import { GDCTValidators } from './gdct_validators';
 import { GDCTValidators2 } from './gdct_validators2';
+import { UnitValidation } from './unit_validation';
 // for conditional formatting
 import ConditionFormatter, { styles } from './conditionformatter'
 
@@ -340,6 +341,7 @@ export default class DataProxy {
     this.validations = new Validations();
     this.GDCTValidators = new GDCTValidators(this, spread);
     this.GDCTValidators2 = new GDCTValidators2(this,spread);
+    this.UnitValidation = new UnitValidation(this,spread);
     //this.GDCTValidators.addTypeValidator(15, 2, '$')
     this.hyperlinks = {};
     this.comments = {};

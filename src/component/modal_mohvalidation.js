@@ -209,6 +209,14 @@ export default class ModalMOHValidation extends Modal {
       
       this.spread.datas[this.spread.getCurrentSheetIndex()].addGDCTValidaton(this.cellRange,type,{operator,value});
       this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.addValidation(this.selectAttributelist,this.selectCategories,type, {operator,value})
+      this.spread.datas[this.spread.getCurrentSheetIndex()].UnitValidation.validate({0: {createdAt: "2020-01-01T00:00:00.000Z",
+      dataType: "decimal(<12,4)",
+      note: "decimal(<12,4)",
+      pattern: "^-?\\d{1,11}(\\.\\d{1,4})?$",
+      unitOfMeasurement: "$",
+      updatedAt: "2022-01-24T15:18:06.650Z",
+      updatedBy: "test8@test.com",
+      _id: "61dd99c8ac08fa1d29776f6a"}})
       
       this.addValDesc(operator);
       
