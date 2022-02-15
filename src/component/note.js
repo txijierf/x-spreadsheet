@@ -8,12 +8,13 @@ export default class Notes {
         this.viewFn = viewFn
         // this.getSelectBox = getSelectBox
         this.sheet = sheet;
-        
+        console.log(sheet);
         this.updateCBs = [] // array of functions to call on update
         this.el = h('div', `${cssPrefix}-note`).on('mouseleave', () => this.hideEl()).hide()
     }
 
     getNote(ri, ci) {
+        
         return this.sheet.data.comments[`${ri}-${ci}`] || ""
     }
 
@@ -34,15 +35,16 @@ export default class Notes {
             h('textarea', `${cssPrefix}-notetext`)
                 .on('change', (e) => this.setNote(ri, ci, e.target.value))
                 .on('blur', () => {if(text === ""){this.hideEl();}})
+                .on('mousewheel', () => {console.log('mouse wheel');this.hideEl();})
                 .children(text)
         )
         
         const { top, left, width } = x;
 
-        //console.log("top difference %d left difference %d right difference %d ", x.top - top, x.left - left , x.width - width);
+        
 
-        console.log("note position %d %d %d", top, left,width);
-        this.el.css('top', `${top}px`).css('left', `${left+ width+2}px`)
+        
+        this.el.css('top', `${top + 290}px`).css('left', `${left+ width+90+2}px`)
         this.el.show()
         this.el.children()[0].focus()
       

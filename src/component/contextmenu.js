@@ -93,10 +93,12 @@ export default class ContextMenu {
       el.css('bottom', `${view.height - y}px`)
         .css('max-height', `${y}px`)
         .css('top', 'auto');
+        console.log("bottom %d", view.height - y)
     } else {
       el.css('top', `${y}px`)
         .css('max-height', `${view.height - y}px`)
         .css('bottom', 'auto');
+        console.log("top %d",y)
     }
     bindClickoutside(el);
   }

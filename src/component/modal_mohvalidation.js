@@ -95,6 +95,7 @@ export default class ModalMOHValidation extends Modal {
 
     this.attributeList = [];
     this.selectAttributelist= [];
+    this.selectCategories = [];
     this.max_value = max_value;
     this.min_value = min_value;
     this.attributeField = attributeField;
@@ -159,7 +160,13 @@ export default class ModalMOHValidation extends Modal {
       max_value.show();
      
       valueField.hide();
-    } else {
+    } 
+    else if(it === 'req'){
+      valueField.hide();
+      min_value.hide();
+      max_value.hide();
+    }
+    else {
       
       //attribute_selection.show();
       valueField.show();
@@ -201,11 +208,13 @@ export default class ModalMOHValidation extends Modal {
       console.log("hi we are saving");
       
       this.spread.datas[this.spread.getCurrentSheetIndex()].addGDCTValidaton(this.cellRange,type,{operator,value});
-      
+      this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.addValidation(this.selectAttributelist,this.selectCategories,type, {operator,value})
       
       this.addValDesc(operator);
       
       this.hide();
+      this.of.input.itemClick('req');
+      this.criteriaOperatorSelected('req');
     }
   }
 
@@ -241,7 +250,7 @@ export default class ModalMOHValidation extends Modal {
         break;
     }
 
-    //let rulesString = this.spread.cell(1,2);
+    
 
     let spread_row = this.spread.datas[this.spread.getCurrentSheetIndex()].rows;
 
@@ -250,8 +259,6 @@ export default class ModalMOHValidation extends Modal {
         var c = spread_row.findInputColOnRow(9,attr_name);
         if(c != undefined){
           let desc_cell = this.spread.datas[this.spread.getCurrentSheetIndex()].getCell(1,c);
-          console.log("this should add to the cell")
-          console.log(c)
           if(desc_cell.text != undefined){
             this.spread.datas[this.spread.getCurrentSheetIndex()].setCellText(1,c,desc_cell.text + "For "+ this.categoryField.val() + desc + '\n');
           }else{
@@ -262,13 +269,7 @@ export default class ModalMOHValidation extends Modal {
       })
     }
     
-    // if(rulesString == undefined){
-      
-    //   this.spread.cellText(1,2,cellrange + desc);
-    // }else{
-    //   this.spread.cellText(1,2,rulesString.text +'\n' +cellrange + desc);
-    // }
-
+   
     
 
   }
@@ -281,9 +282,8 @@ export default class ModalMOHValidation extends Modal {
     if(attribute_data_row === undefined){return a2;}
     Object.keys(attribute_data_row).forEach((key) =>{
       let x = attr_verifacion_row[key];
-      console.log("attr list ;"+  x.text )
-      if(x.text !=undefined  && (!isNaN(x.text))){
-        
+      if(x === undefined){}
+      else if(x.text !=undefined  && (!isNaN(x.text))){
         attribute_list.push({key: attribute_data_row[key].text , title: attribute_data_row[key].text});
         a2.push(attribute_data_row[key].text);
       }
@@ -298,6 +298,7 @@ export default class ModalMOHValidation extends Modal {
     this.cellRange = cellR;
     var attr = ""; 
     var cat = "";
+    var catList = []
     var attrs = [];
     var attribute_data_row = this.spread.getRow(9);
 
@@ -317,11 +318,14 @@ export default class ModalMOHValidation extends Modal {
       let x = this.spread.getCell(i,1)
       if(x != undefined && x.text != undefined ){
         cat += this.spread.getCell(i,1).text+","
+        catList.push(this.spread.getCell(i,1).text);
       }
     }
 
     this.attributeField.val(attr);
     this.categoryField.val(cat);
+    this.selectAttributelist = attrs;
+    this.selectCategories = catList;
 
     return attrs;
   }
@@ -329,7 +333,7 @@ export default class ModalMOHValidation extends Modal {
   prepare(cellR){
     var attrList = this.getAttributeList();
     var selectedAttr = this.selectedAtrributesandCategories(cellR,attrList);
-    this.selectAttributelist = selectedAttr;
+    
     var nonselectedAttrs = attrList.filter(x => !(selectedAttr.includes(x)) );
     this.attributeList = attrList;
     this.valueField.input.setItems(nonselectedAttrs);
