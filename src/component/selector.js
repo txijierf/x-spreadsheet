@@ -221,8 +221,14 @@ export default class Selector {
     // for performance
     this.lastri = -1;
     this.lastci = -1;
+    // for note
+    this.setObservers = []
 
     startZIndex += 1;
+  }
+
+  addSetObserver(cb) {
+    this.setObservers.push(cb)
   }
 
   resetData(data) {
@@ -301,6 +307,9 @@ export default class Selector {
     this.range = cellRange;
     this.resetAreaOffset();
     this.el.show();
+    for (let cb of this.setObservers) {
+      cb(...this.indexes)
+    }
   }
 
   setEnd(ri, ci, moving = true) {

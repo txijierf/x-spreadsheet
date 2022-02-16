@@ -49,7 +49,7 @@ function renderCellBorders(bboxes, translateFunc) {
 }
 */
 
-export function renderCell(draw, data, rindex, cindex, yoffset = 0) {
+export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = () => false) {
   const { sortedRowMap, rows, cols } = data;
   if (rows.isHide(rindex) || cols.isHide(cindex)) return;
   let nrindex = rindex;
@@ -59,11 +59,12 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0) {
 
   const cell = data.getCellOrNew(nrindex, cindex);
   if (cell === null) return;
+  if (rindex === 5, cindex === 5) console.log('yup, here')
   let frozen = false;
   if ('editable' in cell && cell.editable === false) {
     frozen = true;
   }
-
+  
   const style = data.getCellStyleOrDefault(nrindex, cindex);
   const dbox = getDrawBox(data, rindex, cindex, yoffset);
   dbox.bgcolor = style.bgcolor;
@@ -110,6 +111,9 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0) {
     if (frozen) {
       draw.frozen(dbox);
     }
+    if (hasNote(rindex, cindex)) {
+      draw.note(dbox)
+    }
   });
 }
 
@@ -129,7 +133,7 @@ function renderAutofilter(viewRange) {
 }
 
 function renderContent(viewRange, fw, fh, tx, ty) {
-  const { draw, data } = this;
+  const { draw, data, hasNote } = this;
   draw.save();
   draw.translate(fw, fh)
     .translate(tx, ty);
@@ -150,7 +154,7 @@ function renderContent(viewRange, fw, fh, tx, ty) {
   draw.save();
   draw.translate(0, -exceptRowTotalHeight);
   viewRange.each((ri, ci) => {
-    renderCell(draw, data, ri, ci);
+    renderCell(draw, data, ri, ci, 0, hasNote);
   }, ri => filteredTranslateFunc(ri));
   draw.restore();
 
@@ -161,7 +165,7 @@ function renderContent(viewRange, fw, fh, tx, ty) {
   draw.translate(0, -exceptRowTotalHeight);
   data.eachMergesInView(viewRange, ({ sri, sci, eri }) => {
     if (!exceptRowSet.has(sri)) {
-      renderCell(draw, data, sri, sci);
+      renderCell(draw, data, sri, sci, 0, hasNote);
     } else if (!rset.has(sri)) {
       rset.add(sri);
       const height = data.rows.sumHeight(sri, eri + 1);
@@ -306,10 +310,11 @@ function renderFreezeHighlightLine(fw, fh, ftw, fth) {
 
 /** end */
 class Table {
-  constructor(el, data) {
+  constructor(el, data, hasNote) {
     this.el = el;
     this.draw = new Draw(el, data.viewWidth(), data.viewHeight());
     this.data = data;
+    this.hasNote = hasNote;
   }
 
   resetData(data) {
