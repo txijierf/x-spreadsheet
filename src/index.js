@@ -46,19 +46,20 @@ class Spreadsheet {
       .on('contextmenu', evt => evt.preventDefault());
     // create canvas element
     targetEl.appendChild(rootEl.el);
-    this.sheet = new Sheet(rootEl, this.data);
+
+    this.sheet = new Sheet(rootEl, this.data, this);
     this.julien_spreadsheet_flag = true;
     rootEl.child(this.bottombar.el);
   }
 
   addSheet(name, active = true) {
     const n = name || `sheet${this.sheetIndex}`;
-    const d = new DataProxy(n, this.options, this.datas);
+    const d = new DataProxy(n, this.options, this.datas, this);
     d.change = (...args) => {
       this.sheet.trigger('change', ...args);
     };
     this.datas.push(d);
-    // console.log('d:', n, d, this.datas);
+    
     this.bottombar.addItem(n, active);
     this.sheetIndex += 1;
     return d;
@@ -89,6 +90,10 @@ class Spreadsheet {
     return this;
   }
 
+  getSheet(){
+    return this.sheet;
+  }
+
   getData() {
     return this.datas.map(it => it.getData());
   }
@@ -98,12 +103,24 @@ class Spreadsheet {
   getCurrentSheetIndex(){
     return this.bottombar.getActiveSheet()
   }
+
+  getCell(ri,ci){
+    return this.datas[this.getCurrentSheetIndex()].getCell(ri, ci);
+  }
   
   // Insert a row in Sheet at rowNum
   // added by Sheldon Su 2021/02/23
   insertRowAt(rowNum){
     const currentSheet = this.datas[this.getCurrentSheetIndex()];
     currentSheet.insert('row', 1, rowNum)
+  }
+
+  getRow(rowNum){
+    let x = this.datas[this.getCurrentSheetIndex()].rows._[rowNum];
+    if(x == undefined){
+      return undefined;
+    }
+    return this.datas[this.getCurrentSheetIndex()].rows._[rowNum].cells;
   }
 
   // Insert a col in Sheet at rowNum
@@ -120,7 +137,7 @@ class Spreadsheet {
   }
 
   addOtherGreaterThan(minRi, maxRi, minCi, maxCi, val1, val2, style, index) {
-    console.log('Im back')
+    
     const targetProxy = this.datas[index];
     targetProxy.addOtherGreaterThan(minRi, maxRi, minCi, maxCi, val1, val2, style);
   }
@@ -144,18 +161,19 @@ class Spreadsheet {
   }
 
   on(eventName, func) {
+    
     this.sheet.on(eventName, func);
     return this;
   }
 
   validate() {
-    console.log('IN VALIDATION')
+    
     const { validations } = this.data;
     return validations.errors.size <= 0;
   }
 
   addValidation(ri, ci, sheetIndex = 0) {
-    console.log('called', this.sheet)
+    
     this.datas[0].addValidation('cell', 'B7', {
       operator: 'be',
       required: false,
@@ -165,7 +183,7 @@ class Spreadsheet {
   }
 
   change(cb) {
-    console.log('IN CHANGE')
+    
     this.addValidation(0, 0)
     this.sheet.on('change', cb);
     return this;

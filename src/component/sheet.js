@@ -16,7 +16,7 @@ import SortFilter from './sort_filter';
 import { xtoast } from './message';
 import { cssPrefix } from '../config';
 import { formulas } from '../core/formula';
-import Notes from './note'
+import Notes from './note';
 
 /**
  * @desc throttle fn
@@ -97,7 +97,7 @@ function selectorMove(multiple, direction) {
   if (multiple) {
     [ri, ci] = selector.moveIndexes;
   }
-  // console.log('selector.move:', ri, ci);
+  
   if (direction === 'left') {
     if (ci > 0) ci -= 1;
   } else if (direction === 'right') {
@@ -126,7 +126,7 @@ function selectorMove(multiple, direction) {
 
 // private methods
 function overlayerMousemove(evt) {
-  // console.log('x:', evt.offsetX, ', y:', evt.offsetY);
+  
   if (evt.buttons !== 0) return;
   if (evt.target.className === `${cssPrefix}-resizer-hover`) return;
   const { offsetX, offsetY } = evt;
@@ -362,7 +362,7 @@ function toolbarChangePaintformatPaste() {
 }
 
 function overlayerMousedown(evt) {
-  // console.log(':::::overlayer.mousedown:', evt.detail, evt.button, evt.buttons, evt.shiftKey);
+  //console.log(':::::overlayer.mousedown:', evt.detail, evt.button, evt.buttons, evt.shiftKey);
   // console.log('evt.target.className:', evt.target.className);
   const {
     selector, data, table, sortFilter,
@@ -571,6 +571,7 @@ function sortFilterChange(ci, order, operator, value) {
 
 function sheetInitEvents() {
   const {
+    data,
     selector,
     overlayerEl,
     rowResizer,
@@ -602,12 +603,16 @@ function sheetInitEvents() {
         } else {
           overlayerMousedown.call(this, evt);
           contextMenu.setPosition(evt.offsetX, evt.offsetY);
+          
         }
         evt.stopPropagation();
       } else if (evt.detail === 2) {
         editorSet.call(this);
       } else {
         overlayerMousedown.call(this, evt);
+        // console.log("offsetx %d offsety %d",evt.offsetX, evt.offsetY);
+        // console.log(this.spread.datas[this.spread.getCurrentSheetIndex()].getSelectedRect());
+        notes.showNote(...this.selector.indexes,this.getSelectedRect())
       }
     })
     .on('mousewheel.stop', (evt) => {
@@ -665,6 +670,7 @@ function sheetInitEvents() {
   // modal validation
   modalValidation.change = (action, ...args) => {
     if (action === 'save') {
+      
       this.data.addValidation(...args);
     } else {
       this.data.removeValidation();
@@ -672,13 +678,19 @@ function sheetInitEvents() {
   };
   // contextmenu
   contextMenu.itemClick = (type) => {
-    // console.log('type:', type);
+    
     if (type === 'validation') {
       modalValidation.setValue(this.data.getSelectedValidation());
     } else if (type === 'moh-validation') {
+      
+      modalMOHValidation.prepare(this.data.getSelectedCellRange());
       modalMOHValidation.setValue(this.data.getSelectedValidation());
-    } else if (type === 'comment') {
-      notes.showNote(...this.selector.indexes)
+    }  else if (type === 'comment') {
+      // open comment and set text(?)
+      console.log('open comment herrre' + this.selector.indexes)
+      console.log(this.getSelectedRect())
+      console.log(this.selector.indexes)
+      notes.showNote(...this.selector.indexes,this.getSelectedRect())
     } else if (type === 'copy') {
       copy.call(this);
     } else if (type === 'cut') {
@@ -860,7 +872,7 @@ function sheetInitEvents() {
 }
 
 export default class Sheet {
-  constructor(targetEl, data) {
+  constructor(targetEl, data, spread) {
     this.eventMap = createEventEmitter();
     const { view, showToolbar, showContextmenu } = data.settings;
     this.el = h('div', `${cssPrefix}-sheet`);
@@ -868,6 +880,7 @@ export default class Sheet {
     this.print = new Print(data);
     targetEl.children(this.toolbar.el, this.el, this.print.el);
     this.data = data;
+    this.spread = spread;
     // table
     this.tableEl = h('canvas', `${cssPrefix}-table`);
     // resizer
@@ -883,14 +896,17 @@ export default class Sheet {
       data.rows.height,
     );
     // data validation
+   
     this.modalValidation = new ModalValidation();
     // MOH validation
-    this.modalMOHValidation = new ModalMOHValidation();
-    // Notes store
+    this.modalMOHValidation = new ModalMOHValidation(this.spread);
+    // Notes store.. has is moved?
     this.notes = new Notes(() => this.getRect(), () => this.selector.l.areaEl.el, () => this.selector.indexes);
     // modal for conditional formatting
     // different modals depending on required values
     this.modalConditional = new ModalConditional(this.data);
+    // Notes store
+    this.notes = new Notes(() => this.getRect(),this);
     // contextMenu
     this.contextMenu = new ContextMenu(() => this.getRect(), !showContextmenu);
     // selector
@@ -993,6 +1009,11 @@ export default class Sheet {
     return { width: data.viewWidth(), height: data.viewHeight() };
   }
 
+  getSelectedRect(){
+    return this.spread.datas[this.spread.getCurrentSheetIndex()].getSelectedRect()
+  }
+  
+
   getTableOffset() {
     const { rows, cols } = this.data;
     const { width, height } = this.getRect();
@@ -1005,7 +1026,7 @@ export default class Sheet {
   }
 
   addValidation() {
-    console.log('running in sheet')
+    
     this.data.addValidation('cell', 'B5', {
       operator: 'be',
       required: false,

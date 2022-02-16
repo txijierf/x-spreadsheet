@@ -14,6 +14,8 @@ import { CellRange } from './cell_range';
 import { expr2xy, xy2expr } from './alphabet';
 import { t } from '../locale/locale';
 import { GDCTValidators } from './gdct_validators';
+import { GDCTValidators2 } from './gdct_validators2';
+import { UnitValidation } from './unit_validation';
 // for conditional formatting
 import ConditionFormatter, { styles } from './conditionformatter'
 
@@ -140,7 +142,7 @@ function copyPaste(srcCellRange, dstCellRange, what, autofill = false) {
   }
   rows.copyPaste(srcCellRange, dstCellRange, what, autofill, (ri, ci, cell) => {
     if (cell && cell.merge) {
-      // console.log('cell:', ri, ci, cell);
+      
       const [rn, cn] = cell.merge;
       if (rn <= 0 && cn <= 0) return;
       merges.add(new CellRange(ri, ci, ri + rn, ci + cn));
@@ -279,7 +281,7 @@ function setStyleBorders({ mode, style, color }) {
 function getCellRowByY(y, scrollOffsety) {
   const { rows } = this;
   const fsh = this.freezeTotalHeight();
-  // console.log('y:', y, ', fsh:', fsh);
+  
   let inits = rows.height;
   if (fsh + rows.height < y) inits -= scrollOffsety;
 
@@ -297,7 +299,7 @@ function getCellRowByY(y, scrollOffsety) {
     }
   }
   top -= height;
-  // console.log('ri:', ri, ', top:', top, ', height:', height);
+  
 
   if (top <= 0) {
     return { ri: -1, top: 0, height };
@@ -326,9 +328,10 @@ function getCellColByX(x, scrollOffsetx) {
 }
 
 export default class DataProxy {
-  constructor(name, settings, sheetDatas) {
+  constructor(name, settings, sheetDatas, spread) {
     this.settings = helper.merge(defaultSettings, settings || {});
     // save data begin
+    this.spread = spread;
     this.name = name || 'sheet';
     this.freeze = [0, 0];
     this.styles = []; // Array<Style>
@@ -336,8 +339,10 @@ export default class DataProxy {
     this.rows = new Rows(this.settings.row);
     this.cols = new Cols(this.settings.col);
     this.validations = new Validations();
-    this.GDCTValidators = new GDCTValidators();
-    this.GDCTValidators.addTypeValidator(15, 2, '$')
+    this.GDCTValidators = new GDCTValidators(this, spread);
+    this.GDCTValidators2 = new GDCTValidators2(this,spread);
+    this.UnitValidation = new UnitValidation(this,spread);
+    //this.GDCTValidators.addTypeValidator(15, 2, '$')
     this.hyperlinks = {};
     this.comments = {};
     this.sheetDatas = sheetDatas;
@@ -379,7 +384,7 @@ export default class DataProxy {
   }
 
   addValidation(mode, ref, validator) {
-    // console.log('mode:', mode, ', ref:', ref, ', validator:', validator);
+    
     this.changeData(() => {
       this.validations.add(mode, ref, validator);
     });
@@ -396,6 +401,10 @@ export default class DataProxy {
     const { ri, ci } = this.selector;
     const v = this.validations.get(ri, ci);
     return v ? v.validator : null;
+  }
+
+  addGDCTValidaton(cellR,type ,validator){
+    this.GDCTValidators.addValidation(cellR,type,validator);
   }
 
   addTypeValidator(ri, ci, type) {
@@ -447,6 +456,7 @@ export default class DataProxy {
 
   getSelectedValidation() {
     const { ri, ci, range } = this.selector;
+    
     const v = this.validations.get(ri, ci);
     const ret = { ref: range.toString() };
     if (v !== null) {
@@ -454,6 +464,11 @@ export default class DataProxy {
       ret.validator = v.validator;
     }
     return ret;
+  }
+  
+  getSelectedCellRange(){
+    
+    return this.selector.range;
   }
 
   canUndo() {
@@ -486,7 +501,7 @@ export default class DataProxy {
 
   // what: all | text | format
   paste(what = 'all', error = () => {}) {
-    // console.log('sIndexes:', sIndexes);
+    
     const { clipboard, selector } = this;
     if (clipboard.isClear()) return false;
     if (!canPaste.call(this, clipboard.range, selector.range, error)) return false;
@@ -559,7 +574,7 @@ export default class DataProxy {
       sri, sci, eri, eci,
     ));
     selector.range = merges.union(selector.range);
-    // console.log('selector.range:', selector.range);
+    
     return selector.range;
   }
 
@@ -568,7 +583,7 @@ export default class DataProxy {
       selector, rows, cols, merges,
     } = this;
     let cellRange = merges.getFirstIncludes(ri, ci);
-    // console.log('cellRange:', cellRange, ri, ci, merges);
+    
     if (cellRange === null) {
       cellRange = new CellRange(ri, ci, ri, ci);
       if (ri === -1) {
@@ -593,7 +608,7 @@ export default class DataProxy {
       } else if (property === 'border') {
         setStyleBorders.call(this, value);
       } else if (property === 'formula') {
-        // console.log('>>>', selector.multiple());
+        
         const { ri, ci, range } = selector;
         if (selector.multiple()) {
           const [rn, cn] = selector.size();
@@ -670,7 +685,7 @@ export default class DataProxy {
         if (vIndex >= 0) {
           filter.value.splice(vIndex, 1, text);
         }
-        // console.log('filter:', filter, oldCell);
+       
       }
     }
     // this.resetAutoFilter();
@@ -691,7 +706,7 @@ export default class DataProxy {
     } = this.getSelectedRect();
     const x1 = x - this.cols.indexWidth;
     const y1 = y - this.rows.height;
-    // console.log('x:', x, ',y:', y, 'left:', left, 'top:', top);
+    
     return x1 > left && x1 < (left + width)
       && y1 > top && y1 < (top + height);
   }
@@ -715,7 +730,7 @@ export default class DataProxy {
     const {
       sri, sci, eri, eci,
     } = cellRange;
-    // console.log('sri:', sri, ',sci:', sci, ', eri:', eri, ', eci:', eci);
+    
     // no selector
     if (sri < 0 && sci < 0) {
       return {
@@ -726,7 +741,7 @@ export default class DataProxy {
     const top = rows.sumHeight(0, sri, exceptRowSet);
     const height = rows.sumHeight(sri, eri + 1, exceptRowSet);
     const width = cols.sumWidth(sci, eci + 1);
-    // console.log('sri:', sri, ', sci:', sci, ', eri:', eri, ', eci:', eci);
+   
     let left0 = left - scroll.x;
     let top0 = top - scroll.y;
     const fsh = this.freezeTotalHeight();
@@ -803,7 +818,7 @@ export default class DataProxy {
     const { selector, rows } = this;
     if (this.isSignleSelected()) return;
     const [rn, cn] = selector.size();
-    // console.log('merge:', rn, cn);
+    
     if (rn > 1 || cn > 1) {
       const { sri, sci } = selector.range;
       this.changeData(() => {
@@ -812,7 +827,7 @@ export default class DataProxy {
         this.merges.add(selector.range);
         // delete merge cells
         this.rows.deleteCells(selector.range);
-        // console.log('cell:', cell, this.d);
+        
         this.rows.setCell(sri, sci, cell);
       });
     }
@@ -908,6 +923,7 @@ export default class DataProxy {
         cell.merge[0] += rn;
         cell.merge[1] += cn;
       });
+      this.resetCommentsandErrors();
     });
   }
 
@@ -937,9 +953,9 @@ export default class DataProxy {
         size = csize;
         cols.len -= 1;
       }
-      // console.log('type:', type, ', si:', si, ', size:', size);
+      
       merges.shift(type, si, -size, (ri, ci, rn, cn) => {
-        // console.log('ri:', ri, ', ci:', ci, ', rn:', rn, ', cn:', cn);
+        
         const cell = rows.getCell(ri, ci);
         cell.merge[0] += rn;
         cell.merge[1] += cn;
@@ -947,6 +963,7 @@ export default class DataProxy {
           delete cell.merge;
         }
       });
+      this.resetCommentsandErrors();
     });
   }
 
@@ -956,7 +973,7 @@ export default class DataProxy {
     const [
       ci, left, width,
     ] = helper.rangeReduceIf(fci, cols.len, 0, 0, x, i => cols.getWidth(i));
-    // console.log('fci:', fci, ', ci:', ci);
+    
     let x1 = left;
     if (x > 0) x1 += width;
     if (scroll.x !== x1) {
@@ -974,7 +991,7 @@ export default class DataProxy {
     ] = helper.rangeReduceIf(fri, rows.len, 0, 0, y, i => rows.getHeight(i));
     let y1 = top;
     if (y > 0) y1 += height;
-    // console.log('ri:', ri, ' ,y:', y1);
+    
     if (scroll.y !== y1) {
       scroll.ri = y > 0 ? ri : 0;
       scroll.y = y1;
@@ -992,7 +1009,7 @@ export default class DataProxy {
     if (cell !== null) {
       if (cell.merge) {
         const [rn, cn] = cell.merge;
-        // console.log('cell.merge:', cell.merge);
+        
         if (rn > 0) {
           for (let i = 1; i <= rn; i += 1) {
             height += rows.getHeight(ri + i);
@@ -1005,7 +1022,7 @@ export default class DataProxy {
         }
       }
     }
-    // console.log('data:', this.d);
+    
     return {
       left, top, width, height, cell,
     };
@@ -1013,6 +1030,10 @@ export default class DataProxy {
 
   getCell(ri, ci) {
     return this.rows.getCell(ri, ci);
+  }
+
+  getCellOrNew(ri,ci){
+    return this.rows.getCellOrNew(ri, ci);
   }
 
   getCellTextOrDefault(ri, ci, si=this.name) {
@@ -1069,7 +1090,9 @@ export default class DataProxy {
       this.change(this.getData());
     }
     // validator
-    this.GDCTValidators.validateAll(ri, ci, text)
+    
+    //this.GDCTValidators.validateAll();
+    this.GDCTValidators2.validateAll();
     validations.validate(ri, ci, text);
   }
 
@@ -1148,7 +1171,7 @@ export default class DataProxy {
     const {
       scroll, rows, cols, freeze, exceptRowSet,
     } = this;
-    // console.log('scroll:', scroll, ', freeze:', freeze)
+    
     let { ri, ci } = scroll;
     if (ri <= 0) [ri] = freeze;
     if (ci <= 0) [, ci] = freeze;
@@ -1167,7 +1190,7 @@ export default class DataProxy {
       eci = j;
       if (x > this.viewWidth()) break;
     }
-    // console.log(ri, ci, eri, eci, x, y);
+    
     return new CellRange(ri, ci, eri, eci, x, y);
   }
 
@@ -1193,6 +1216,13 @@ export default class DataProxy {
     }
   }
 
+
+  resetCommentsandErrors(){
+    this.comments = {}
+    this.GDCTValidators2.clearErrors();
+    this.GDCTValidators2.validateAll();
+  }
+
   // type: row | col
   // index row-index | col-index
   unhideRowsOrCols(type, index) {
@@ -1210,7 +1240,7 @@ export default class DataProxy {
         offset += 1;
       }
     }
-    // console.log('min:', min, ', max:', max, ', scroll:', scroll);
+    
     for (let i = min + offset; i <= max + offset; i += 1) {
       if (frset.has(i)) {
         offset += 1;
@@ -1244,7 +1274,7 @@ export default class DataProxy {
 
   addStyle(nstyle) {
     const { styles } = this;
-    // console.log('old.styles:', styles, nstyle);
+    
     for (let i = 0; i < styles.length; i += 1) {
       const style = styles[i];
       if (helper.equals(style, nstyle)) return i;

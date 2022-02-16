@@ -126,6 +126,7 @@ export default {
       email: 'Email',
     },
     operator: {
+      req: 'required',
       be: 'between',
       nbe: 'not between',
       wr: 'within range',

@@ -56,8 +56,8 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = ()
   if (sortedRowMap.has(rindex)) {
     nrindex = sortedRowMap.get(rindex);
   }
-  
-  const cell = data.getCell(nrindex, cindex);
+
+  const cell = data.getCellOrNew(nrindex, cindex);
   if (cell === null) return;
   if (rindex === 5, cindex === 5) console.log('yup, here')
   let frozen = false;
@@ -103,9 +103,9 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = ()
       underline: style.underline,
     }, style.textwrap);
     // error
-    const error = data.validations.getError(rindex, cindex) || data.GDCTValidators.getError(rindex, cindex);
+    const error = data.validations.getError(rindex, cindex) || data.GDCTValidators2.getError(rindex, cindex) || data.UnitValidation.getError(rindex, cindex);
     if (error) {
-      // console.log('error:', rindex, cindex, error);
+      //console.log("Error at the %d %d",rindex, cindex )
       draw.error(dbox);
     }
     if (frozen) {

@@ -11,6 +11,7 @@ const menuItems = [
   { key: 'paste-format', title: tf('contextmenu.pasteFormat'), label: 'Ctrl+Alt+V' },
   { key: 'comment', title: tf('contextmenu.comment') },
   { key: 'divider' },
+  { key: 'comment', title: tf('contextmenu.comment') },
   { key: 'insert-row', title: tf('contextmenu.insertRow') },
   { key: 'insert-column', title: tf('contextmenu.insertColumn') },
   { key: 'divider' },
@@ -93,10 +94,12 @@ export default class ContextMenu {
       el.css('bottom', `${view.height - y}px`)
         .css('max-height', `${y}px`)
         .css('top', 'auto');
+        console.log("bottom %d", view.height - y)
     } else {
       el.css('top', `${y}px`)
         .css('max-height', `${view.height - y}px`)
         .css('bottom', 'auto');
+        console.log("top %d",y)
     }
     bindClickoutside(el);
   }
