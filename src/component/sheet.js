@@ -612,7 +612,9 @@ function sheetInitEvents() {
         overlayerMousedown.call(this, evt);
         // console.log("offsetx %d offsety %d",evt.offsetX, evt.offsetY);
         // console.log(this.spread.datas[this.spread.getCurrentSheetIndex()].getSelectedRect());
-        notes.showNote(...this.selector.indexes,this.getSelectedRect())
+        const rect = this.selector.l.areaEl.el.getBoundingClientRect()
+        console.log('sending', rect)
+        notes.showNote(...this.selector.indexes,rect)
       }
     })
     .on('mousewheel.stop', (evt) => {
@@ -687,10 +689,9 @@ function sheetInitEvents() {
       modalMOHValidation.setValue(this.data.getSelectedValidation());
     }  else if (type === 'comment') {
       // open comment and set text(?)
-      console.log('open comment herrre' + this.selector.indexes)
-      console.log(this.getSelectedRect())
-      console.log(this.selector.indexes)
-      notes.showNote(...this.selector.indexes,this.getSelectedRect())
+      const rect = this.selector.l.areaEl.el.getBoundingClientRect()
+      console.log('sending', rect)
+      notes.showNote(...this.selector.indexes,rect)
     } else if (type === 'copy') {
       copy.call(this);
     } else if (type === 'cut') {
@@ -901,7 +902,7 @@ export default class Sheet {
     // MOH validation
     this.modalMOHValidation = new ModalMOHValidation(this.spread);
     // Notes store.. has is moved?
-    this.notes = new Notes(() => this.getRect(), () => this.selector.l.areaEl.el, () => this.selector.indexes);
+    // this.notes = new Notes(() => this.getRect(), () => this.selector.l.areaEl.el, () => this.selector.indexes);
     // modal for conditional formatting
     // different modals depending on required values
     this.modalConditional = new ModalConditional(this.data);
