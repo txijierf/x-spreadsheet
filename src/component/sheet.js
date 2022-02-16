@@ -900,6 +900,8 @@ export default class Sheet {
     this.modalValidation = new ModalValidation();
     // MOH validation
     this.modalMOHValidation = new ModalMOHValidation(this.spread);
+    // Notes store.. has is moved?
+    this.notes = new Notes(() => this.getRect(), () => this.selector.l.areaEl.el, () => this.selector.indexes);
     // modal for conditional formatting
     // different modals depending on required values
     this.modalConditional = new ModalConditional(this.data);
@@ -934,12 +936,20 @@ export default class Sheet {
       this.sortFilter.el,
     );
     // table
-    this.table = new Table(this.tableEl.el, data);
+    this.table = new Table(this.tableEl.el, data, (ri,ci) => this.notes.hasNote(ri,ci));
     this.julien_sheet_flag = true;
     sheetInitEvents.call(this);
     sheetReset.call(this);
     // init selector [0, 0]
     selectorSet.call(this, false, 0, 0);
+    this.selector.addSetObserver((ri, ci) => {
+      if (this.notes.hasNote(ri,ci)) {
+        this.notes.showNote(ri,ci)
+      } else {
+        this.notes.hideEl()
+      }
+    })
+    this.notes.setNote(1,1,"test12")
   }
 
   on(eventName, func) {
