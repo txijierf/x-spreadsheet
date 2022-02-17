@@ -4,6 +4,7 @@ import { cssPrefix } from '../config';
 import { bind, unbind } from './event';
 
 export default class Notes {
+  
     constructor(viewFn,sheet) {
         this.viewFn = viewFn
         // this.getSelectBox = getSelectBox
@@ -13,12 +14,27 @@ export default class Notes {
         this.el = h('div', `${cssPrefix}-note`).on('mouseleave', () => this.hideEl()).hide()
     }
 
+    addUpdateCBs(cb) {
+        this.updateCBs.push(cb)
+    }
+
+    runCBs(action, ri, ci, newNote) {
+        for (let cb of this.updateCBs) {
+            cb(action, ri, ci, newNote)
+        }
+    }
+
+    hasNote(ri, ci) {
+        return this.getNote(ri, ci) !== "";
+    }
+
     getNote(ri, ci) {
         
         return this.sheet.data.comments[`${ri}-${ci}`] || ""
     }
 
     setNote(ri, ci, note) {
+        // this.activeIndexes = [ri, ci]
         this.sheet.data.comments[`${ri}-${ci}`] = note
         for (let cb of this.updateCBs) {
             cb(ri, ci)
@@ -38,22 +54,16 @@ export default class Notes {
                 .on('mousewheel', () => {console.log('mouse wheel');this.hideEl();})
                 .children(text)
         )
-        
         const { top, left, width } = x;
-
-        
-
-        
-        this.el.css('top', `${top + 290}px`).css('left', `${left+ width+90+2}px`)
+        this.el.css('top', `${+top.toFixed()}px`).css('left', `${+left.toFixed() + +width.toFixed() + 5}px`)
         this.el.show()
         this.el.children()[0].focus()
-      
     }
 
     clearNote(ri, ci) {
         this.setNote(ri, ci, "")
     }
-
+    
     hideEl() {
         if (![...this.el.children()].includes(document.activeElement)) {
             this.el.hide()
