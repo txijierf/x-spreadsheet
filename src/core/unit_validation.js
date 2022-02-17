@@ -32,8 +32,6 @@ export class UnitValidation{
             let unit = rows.getCell(x,Number(hasUnit))
             if(unit != null && unit.text != undefined){
                 let unitInfo = this.getUnit(info, unit.text)
-
-
                 console.log("pattern " + unitInfo.pattern + " for unit " + unit.text)
 
                 if( unitInfo!= null){
@@ -61,6 +59,8 @@ export class UnitValidation{
                     errorcells += xy2expr(i,ri) +',';
                 }
             }
+
+            console.log("hello")
         }
 
         if(errorcells == ""){
