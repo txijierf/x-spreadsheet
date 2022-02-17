@@ -1,4 +1,4 @@
-
+import { xy2expr, expr2xy } from './alphabet';
 
 export class UnitValidation{
     constructor(datas,spread) {
@@ -31,13 +31,13 @@ export class UnitValidation{
 
             let unit = rows.getCell(x,Number(hasUnit))
             if(unit != null && unit.text != undefined){
-                let unitPattern = this.getPattern(info, unit.text)
+                let unitInfo = this.getUnit(info, unit.text)
 
 
-                console.log("pattern " + unitPattern + " for unit " + unit.text)
+                console.log("pattern " + unitInfo.pattern + " for unit " + unit.text)
 
-                if( unitPattern!= null){
-                    this.validate_row(x,Number(hasUnit) +1,rows._[x].cells,unitPattern)
+                if( unitInfo!= null){
+                    this.validate_row(x,Number(hasUnit),rows._[x].cells,unitInfo)
                 }
             }
             // let unitPattern = this.getPattern(info, unit)
@@ -49,33 +49,43 @@ export class UnitValidation{
     }
 
 
-    validate_row(ri,sci ,row,pattern){
+    validate_row(ri,uci ,row,unitInfo){
 
         let numCols = this.datas.cols.len;
 
-        for(var i = sci; i<numCols;i++){
+        let errorcells = "";
+
+        for(var i = uci+1; i<numCols;i++){
 
             if(this.isAttributeColumn(i)){
                 let checkText = row[i].text;
                 console.log("checktext: " + checkText)
-                if(checkText != undefined && !checkText.match(pattern) ){
-                    console.log("errors")
-                    this.errors.set(`${ri}_${i}`,"comnbruh")
-                }
-                else if(checkText != undefined && checkText.match(pattern) ){
-                    
-                    this.errors.delete(`${ri}_${i}`)
+                if(checkText != undefined && !checkText.match(unitInfo.pattern) ){
+                    console.log("errors %d %d", ri, i)
+                    errorcells += xy2expr(i,ri) +',';
                 }
             }
         }
 
+        if(errorcells == ""){
+            this.errors.delete(`${ri}_${uci}`)
+            let sheet = this.spread.getSheet()
+            if(sheet){sheet.notes.clearNote(ri,uci);}
+        }else{
+            this.errors.set(`${ri}_${uci}`,unitInfo.note)
+            let sheet = this.spread.getSheet()
+            if(sheet){sheet.notes.setNote(ri,uci,'For ' + errorcells+ unitInfo.note);}
+        }
+
+        
+
     }
 
-    getPattern(info,text){
+    getUnit(info,text){
         for(let key in info){
             
             if(info[key].unitOfMeasurement === text){
-                return info[key].pattern
+                return info[key]
             }
         }
 
