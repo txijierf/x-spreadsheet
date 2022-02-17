@@ -54,6 +54,8 @@ export default class Notes {
                 .on('mousewheel', () => {console.log('mouse wheel');this.hideEl();})
                 .children(text)
         )
+
+        console.log(x)
         const { top, left, width } = x;
         this.el.css('top', `${+top.toFixed()}px`).css('left', `${+left.toFixed() + +width.toFixed() + 5}px`)
         this.el.show()

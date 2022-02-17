@@ -610,10 +610,9 @@ function sheetInitEvents() {
         editorSet.call(this);
       } else {
         overlayerMousedown.call(this, evt);
-        // console.log("offsetx %d offsety %d",evt.offsetX, evt.offsetY);
-        // console.log(this.spread.datas[this.spread.getCurrentSheetIndex()].getSelectedRect());
+        
         const rect = this.selector.l.areaEl.el.getBoundingClientRect()
-        console.log('sending', rect)
+       
         notes.showNote(...this.selector.indexes,rect)
       }
     })
@@ -690,7 +689,7 @@ function sheetInitEvents() {
     }  else if (type === 'comment') {
       // open comment and set text(?)
       const rect = this.selector.l.areaEl.el.getBoundingClientRect()
-      console.log('sending', rect)
+      
       notes.showNote(...this.selector.indexes,rect)
     } else if (type === 'copy') {
       copy.call(this);
@@ -945,12 +944,14 @@ export default class Sheet {
     selectorSet.call(this, false, 0, 0);
     this.selector.addSetObserver((ri, ci) => {
       if (this.notes.hasNote(ri,ci)) {
-        this.notes.showNote(ri,ci)
+        const rect = this.selector.l.areaEl.el.getBoundingClientRect()
+        
+        this.notes.showNote(ri,ci,rect)
       } else {
         this.notes.hideEl()
       }
     })
-    this.notes.setNote(1,1,"test12")
+   
   }
 
   on(eventName, func) {

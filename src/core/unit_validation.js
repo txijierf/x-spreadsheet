@@ -40,11 +40,7 @@ export class UnitValidation{
                     this.validate_row(x,Number(hasUnit),rows._[x].cells,unitInfo)
                 }
             }
-            // let unitPattern = this.getPattern(info, unit)
-            // console.log("pattern " + unitPattern + " for unit " + unit)
-            // if(unit != undefined && unitPattern != null){
-            //     this.validate_row(rownum,hasUnit +1,rows._[x].cells,unitPattern)
-            // }
+           
         }
     }
 
