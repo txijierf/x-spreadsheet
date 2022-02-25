@@ -569,6 +569,12 @@ function sortFilterChange(ci, order, operator, value) {
   sheetReset.call(this);
 }
 
+function getNoteDims() {
+  const {top, left, width, height} = this.selector.l.areaEl.el.style
+  const {top: sheetTop, left: sheetLeft} = this.el.el.getBoundingClientRect()
+  return {top: parseFloat(top) + parseFloat(sheetTop), left: parseFloat(left) + parseFloat(sheetLeft), width: parseFloat(width), height: parseFloat(height)}
+}
+
 function sheetInitEvents() {
   const {
     data,
@@ -610,10 +616,8 @@ function sheetInitEvents() {
         editorSet.call(this);
       } else {
         overlayerMousedown.call(this, evt);
-        
-        const rect = this.selector.l.areaEl.el.getBoundingClientRect()
        
-        notes.showNote(...this.selector.indexes,rect)
+        notes.showNote(...this.selector.indexes,getNoteDims.call(this))
       }
     })
     .on('mousewheel.stop', (evt) => {
@@ -688,9 +692,7 @@ function sheetInitEvents() {
       modalMOHValidation.setValue(this.data.getSelectedValidation());
     }  else if (type === 'comment') {
       // open comment and set text(?)
-      const rect = this.selector.l.areaEl.el.getBoundingClientRect()
-      
-      notes.showNote(...this.selector.indexes,rect)
+      notes.showNote(...this.selector.indexes,getNoteDims.call(this))
     } else if (type === 'copy') {
       copy.call(this);
     } else if (type === 'cut') {
@@ -944,9 +946,7 @@ export default class Sheet {
     selectorSet.call(this, false, 0, 0);
     this.selector.addSetObserver((ri, ci) => {
       if (this.notes.hasNote(ri,ci)) {
-        const rect = this.selector.l.areaEl.el.getBoundingClientRect()
-        
-        this.notes.showNote(ri,ci,rect)
+        this.notes.showNote(ri,ci,getNoteDims.call(this))
       } else {
         this.notes.hideEl()
       }
