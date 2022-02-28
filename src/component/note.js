@@ -55,9 +55,8 @@ export default class Notes {
                 .children(text)
         )
 
-        console.log(x)
-        const { top, left, width } = x;
-        this.el.css('top', `${+top.toFixed()}px`).css('left', `${+left.toFixed() + +width.toFixed() + 5}px`)
+        const { top, left, width, height } = x;
+        this.el.css('top', `${parseInt(top) + parseInt(height)}px`).css('left', `${parseInt(left) + (parseInt(width)*3)/2 + 20}px`)
         this.el.show()
         this.el.children()[0].focus()
     }
