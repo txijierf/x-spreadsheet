@@ -51,10 +51,13 @@ export class UnitValidation{
 
         for(var i = uci+1; i<numCols;i++){
 
-            if(this.isAttributeColumn(i)){
+            if(this.isAttributeColumn(i) && row[i] != undefined){
+                
                 let checkText = row[i].text;
-                console.log("checktext: " + checkText)
-                if(checkText != undefined && !checkText.match(unitInfo.pattern) ){
+                
+                if(checkText != undefined && !checkText.match(new RegExp(unitInfo.pattern)) ){
+                    console.log("pattern: " + unitInfo.pattern + " text: " + checkText)
+                    console.log(checkText.match(new RegExp(unitInfo.pattern)))
                     console.log("errors %d %d", ri, i)
                     errorcells += xy2expr(i,ri) +',';
                 }
