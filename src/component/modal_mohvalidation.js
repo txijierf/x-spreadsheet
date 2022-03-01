@@ -209,27 +209,27 @@ export default class ModalMOHValidation extends Modal {
       
       this.spread.datas[this.spread.getCurrentSheetIndex()].addGDCTValidaton(this.cellRange,type,{operator,value});
       this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.addValidation(this.selectAttributelist,this.selectCategories,type, {operator,value})
-      this.spread.datas[this.spread.getCurrentSheetIndex()].UnitValidation.validate({0: {createdAt: "2020-01-01T00:00:00.000Z",
-      dataType: "decimal(<12,4)",
-      note: "decimal(<12,4)",
-      pattern: "^-?\\d{1,11}(\\.\\d{1,4})?$",
-      unitOfMeasurement: "$",
-      updatedAt: "2022-01-24T15:18:06.650Z",
-      updatedBy: "test8@test.com",
-      _id: "61dd99c8ac08fa1d29776f6a"},
-      1:{
-        dataType: "int",
-        note: "'Case' should be integer data type",
-        pattern: "^\\d+$",
-        unitOfMeasurement: "Case"
-      },
-      2:{
-        dataType: "date",
-        note: "Please enter a date like 31-12-2022",
-        pattern: "^([012]\\d|[3][01])-([0]\\d|[1][12])-(\\d{4})$",
-        unitOfMeasurement: "Day"
-      }
-    })
+    //   this.spread.datas[this.spread.getCurrentSheetIndex()].UnitValidation.validate({0: {createdAt: "2020-01-01T00:00:00.000Z",
+    //   dataType: "decimal(<12,4)",
+    //   note: "decimal(<12,4)",
+    //   pattern: "^-?\\d{1,11}(\\.\\d{1,4})?$",
+    //   unitOfMeasurement: "$",
+    //   updatedAt: "2022-01-24T15:18:06.650Z",
+    //   updatedBy: "test8@test.com",
+    //   _id: "61dd99c8ac08fa1d29776f6a"},
+    //   1:{
+    //     dataType: "int",
+    //     note: "'Case' should be integer data type",
+    //     pattern: "^\\d+$",
+    //     unitOfMeasurement: "Case"
+    //   },
+    //   2:{
+    //     dataType: "date",
+    //     note: "Please enter a date like 31-12-2022",
+    //     pattern: "^([012]\\d|[3][01])-([0]\\d|[1][12])-(\\d{4})$",
+    //     unitOfMeasurement: "Day"
+    //   }
+    // })
       
       this.addValDesc(operator);
       
