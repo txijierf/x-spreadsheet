@@ -209,7 +209,7 @@ class Rows {
 
   setCellText(ri, ci, text) {
     const cell = this.getCellOrNew(ri, ci);
-    cell.text = text;
+    if (cell.editable !== false) cell.text = text;
   }
 
   // what: all | format | text
@@ -396,7 +396,7 @@ class Rows {
     const row = this.get(ri);
     if (row !== null) {
       const cell = this.getCell(ri, ci);
-      if (cell !== null) {
+      if (cell !== null && cell.editable !== false) {
         if (what === 'all') {
           delete row.cells[ci];
         } else if (what === 'text') {
