@@ -209,27 +209,27 @@ export default class ModalMOHValidation extends Modal {
       
       this.spread.datas[this.spread.getCurrentSheetIndex()].addGDCTValidaton(this.cellRange,type,{operator,value});
       this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.addValidation(this.selectAttributelist,this.selectCategories,type, {operator,value})
-    //   this.spread.datas[this.spread.getCurrentSheetIndex()].UnitValidation.validate({0: {createdAt: "2020-01-01T00:00:00.000Z",
-    //   dataType: "decimal(<12,4)",
-    //   note: "decimal(<12,4)",
-    //   pattern: "^-?\\d{1,11}(\\.\\d{1,4})?$",
-    //   unitOfMeasurement: "$",
-    //   updatedAt: "2022-01-24T15:18:06.650Z",
-    //   updatedBy: "test8@test.com",
-    //   _id: "61dd99c8ac08fa1d29776f6a"},
-    //   1:{
-    //     dataType: "int",
-    //     note: "'Case' should be integer data type",
-    //     pattern: "^\\d+$",
-    //     unitOfMeasurement: "Case"
-    //   },
-    //   2:{
-    //     dataType: "date",
-    //     note: "Please enter a date like 31-12-2022",
-    //     pattern: "^[0123]\\d-[01]\\d-\\d{4}",
-    //     unitOfMeasurement: "Day"
-    //   }
-    // })
+      this.spread.datas[this.spread.getCurrentSheetIndex()].UnitValidation.validate({0: {createdAt: "2020-01-01T00:00:00.000Z",
+      dataType: "decimal(<12,4)",
+      note: "decimal(<12,4)",
+      pattern: "^-?\\d{1,11}(\\.\\d{1,4})?$",
+      unitOfMeasurement: "$",
+      updatedAt: "2022-01-24T15:18:06.650Z",
+      updatedBy: "test8@test.com",
+      _id: "61dd99c8ac08fa1d29776f6a"},
+      1:{
+        dataType: "int",
+        note: "'Case' should be integer data type",
+        pattern: "^\\d+$",
+        unitOfMeasurement: "Case"
+      },
+      2:{
+        dataType: "date",
+        note: "Please enter a date like 31-12-2022",
+        pattern: "^([012]\\d|[3][01])-([0]\\d|[1][12])-(\\d{4})$",
+        unitOfMeasurement: "Day"
+      }
+    })
       
       this.addValDesc(operator);
       
@@ -243,37 +243,20 @@ export default class ModalMOHValidation extends Modal {
   // ['be', 'nbe', 'eq', 'neq', 'lt', 'lte', 'gt', 'gte']
   addValDesc(t){
     let desc;
-    let cellrange = "For " + this.cellRange.toString();
-    switch(t) {
-      case 'be':
-        desc = "*numbers must be between " + this.min_value.val() + " and " + this.max_value.val() + "*;";
-        break;
-      case 'nbe':
-        desc = "*numbers must not be between " + this.min_value.val() + " and " + this.max_value.val() + "*;";
-        break;
-      case 'eq':
-        desc = "*numbers must equal to " + this.valueField.val()+ "*;";
-        break;
-      case 'neq':
-        desc = "*numbers must NOT equal to " + this.valueField.val()+ "*;";
-        break;
-      case 'lt':
-        desc = "*numbers must be less than " + this.valueField.val()+ "*;";
-        break;
-      case 'lte':
-        desc = "*numbers must be less than or equal to " + this.valueField.val()+ "*;";
-        break;
-      case 'gt':
-        desc = "*numbers must be less than " + this.valueField.val()+ "*;";
-        break;
-      case 'gte':
-        desc = "*numbers must be greater than or equal to " + this.valueField.val() + "*;";
-        break;
+    
+
+    if(t === 'be' || t === 'nbe'){
+      desc = this.min_value.val() + " and " + this.max_value.val();
+    }
+    else{
+      desc = this.valueField.val()
     }
 
     
 
     let spread_row = this.spread.datas[this.spread.getCurrentSheetIndex()].rows;
+
+    let line = "[" + this.categoryField.val() + "]" + " " + t + " " + "[" + desc+"]" +'\n';
 
     if(this.selectAttributelist){
       this.selectAttributelist.forEach(attr_name => {
@@ -281,14 +264,18 @@ export default class ModalMOHValidation extends Modal {
         if(c != undefined){
           let desc_cell = this.spread.datas[this.spread.getCurrentSheetIndex()].getCell(1,c);
           if(desc_cell.text != undefined){
-            this.spread.datas[this.spread.getCurrentSheetIndex()].setCellText(1,c,desc_cell.text + "For "+ this.categoryField.val() + desc + '\n');
+            this.spread.datas[this.spread.getCurrentSheetIndex()].setCellText(1,c,desc_cell.text + line);
           }else{
-            this.spread.datas[this.spread.getCurrentSheetIndex()].setCellText(1,c,"For "+ this.categoryField.val() + desc + '\n');
+            this.spread.datas[this.spread.getCurrentSheetIndex()].setCellText(1,c,line);
           }
+
+          this.randomFunction(c);
           
         }
       })
     }
+
+    
     
    
     
@@ -361,6 +348,33 @@ export default class ModalMOHValidation extends Modal {
     this.min_value.input.setItems(nonselectedAttrs);
     this.max_value.input.setItems(nonselectedAttrs);
     this.valueField.input.setItems(nonselectedAttrs);
+
+  }
+
+
+  randomFunction(s){
+    let desc_cell = this.spread.datas[this.spread.getCurrentSheetIndex()].getCell(1,s);
+    let validate_row = this.spread.getRow(1);
+    console.log("validate_row: ", validate_row)
+    for(var key in validate_row){
+
+      if(validate_row[key].text != undefined){
+        console.log("CELL " + key)
+        let p1 = validate_row[key].text.split('\n'); //array with multiplevalidations
+        const r = /\[(.*?)\] (\w+) \[(.*?)\]/;
+        p1.forEach((valString) =>{
+          if(valString.length > 0){
+            let res = valString.match(r);
+            console.log(res[1].split(','))
+          }
+        })
+      }
+    }
+
+
+
+    
+
 
   }
 

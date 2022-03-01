@@ -32,19 +32,13 @@ export class UnitValidation{
             let unit = rows.getCell(x,Number(hasUnit))
             if(unit != null && unit.text != undefined){
                 let unitInfo = this.getUnit(info, unit.text)
-
-
                 console.log("pattern " + unitInfo.pattern + " for unit " + unit.text)
 
                 if( unitInfo!= null){
                     this.validate_row(x,Number(hasUnit),rows._[x].cells,unitInfo)
                 }
             }
-            // let unitPattern = this.getPattern(info, unit)
-            // console.log("pattern " + unitPattern + " for unit " + unit)
-            // if(unit != undefined && unitPattern != null){
-            //     this.validate_row(rownum,hasUnit +1,rows._[x].cells,unitPattern)
-            // }
+           
         }
     }
 
@@ -57,14 +51,19 @@ export class UnitValidation{
 
         for(var i = uci+1; i<numCols;i++){
 
-            if(this.isAttributeColumn(i)){
+            if(this.isAttributeColumn(i) && row[i] != undefined){
+                
                 let checkText = row[i].text;
-                console.log("checktext: " + checkText)
-                if(checkText != undefined && !checkText.match(unitInfo.pattern) ){
+                
+                if(checkText != undefined && !checkText.match(new RegExp(unitInfo.pattern)) ){
+                    console.log("pattern: " + unitInfo.pattern + " text: " + checkText)
+                    console.log(checkText.match(new RegExp(unitInfo.pattern)))
                     console.log("errors %d %d", ri, i)
                     errorcells += xy2expr(i,ri) +',';
                 }
             }
+
+            console.log("hello")
         }
 
         if(errorcells == ""){
