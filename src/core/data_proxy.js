@@ -407,6 +407,11 @@ export default class DataProxy {
     this.GDCTValidators.addValidation(cellR,type,validator);
   }
 
+  validateAll(){
+    console.log("validate :)");
+    this.GDCTValidators2.validateAll();
+  }
+
   addTypeValidator(ri, ci, type) {
     this.GDCTValidators.addTypeValidator(ri, ci, type)
   }

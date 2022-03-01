@@ -269,7 +269,7 @@ export default class ModalMOHValidation extends Modal {
             this.spread.datas[this.spread.getCurrentSheetIndex()].setCellText(1,c,line);
           }
 
-          this.randomFunction(c);
+         // this.randomFunction(c);
           
         }
       })
