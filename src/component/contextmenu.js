@@ -11,7 +11,6 @@ const menuItems = [
   { key: 'paste-format', title: tf('contextmenu.pasteFormat'), label: 'Ctrl+Alt+V' },
   { key: 'comment', title: tf('contextmenu.comment') },
   { key: 'divider' },
-  { key: 'comment', title: tf('contextmenu.comment') },
   { key: 'insert-row', title: tf('contextmenu.insertRow') },
   { key: 'insert-column', title: tf('contextmenu.insertColumn') },
   { key: 'divider' },
