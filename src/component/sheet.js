@@ -577,6 +577,12 @@ function sortFilterChange(ci, order, operator, value) {
   sheetReset.call(this);
 }
 
+function getNoteDims() {
+  const {top, left, width, height} = this.selector.l.areaEl.el.style
+  const {top: sheetTop, left: sheetLeft} = this.el.el.getBoundingClientRect()
+  return {top: parseFloat(top) + parseFloat(sheetTop), left: parseFloat(left) + parseFloat(sheetLeft), width: parseFloat(width), height: parseFloat(height)}
+}
+
 function sheetInitEvents() {
   const {
     data,
@@ -618,11 +624,8 @@ function sheetInitEvents() {
         editorSet.call(this);
       } else {
         overlayerMousedown.call(this, evt);
-        // console.log("offsetx %d offsety %d",evt.offsetX, evt.offsetY);
-        // console.log(this.spread.datas[this.spread.getCurrentSheetIndex()].getSelectedRect());
-        const rect = this.selector.l.areaEl.el.getBoundingClientRect()
-        console.log('sending', rect)
-        notes.showNote(...this.selector.indexes,rect)
+       
+        notes.showNote(...this.selector.indexes,getNoteDims.call(this))
       }
     })
     .on('mousewheel.stop', (evt) => {
@@ -697,9 +700,7 @@ function sheetInitEvents() {
       modalMOHValidation.setValue(this.data.getSelectedValidation());
     }  else if (type === 'comment') {
       // open comment and set text(?)
-      const rect = this.selector.l.areaEl.el.getBoundingClientRect()
-      console.log('sending', rect)
-      notes.showNote(...this.selector.indexes,rect)
+      notes.showNote(...this.selector.indexes,getNoteDims.call(this))
     } else if (type === 'copy') {
       copy.call(this);
     } else if (type === 'cut') {
@@ -960,12 +961,12 @@ export default class Sheet {
     selectorSet.call(this, false, 0, 0);
     this.selector.addSetObserver((ri, ci) => {
       if (this.notes.hasNote(ri,ci)) {
-        this.notes.showNote(ri,ci)
+        this.notes.showNote(ri,ci,getNoteDims.call(this))
       } else {
         this.notes.hideEl()
       }
     })
-    this.notes.setNote(1,1,"test12")
+   
   }
 
   on(eventName, func) {

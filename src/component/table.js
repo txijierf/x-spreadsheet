@@ -59,7 +59,7 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = ()
 
   const cell = data.getCellOrNew(nrindex, cindex);
   if (cell === null) return;
-  if (rindex === 5, cindex === 5) console.log('yup, here')
+  // if (rindex === 5, cindex === 5) console.log('yup, here')
   let frozen = false;
   if ('editable' in cell && cell.editable === false) {
     frozen = true;

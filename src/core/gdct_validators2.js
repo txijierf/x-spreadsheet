@@ -52,6 +52,30 @@ export class GDCTValidators2{
         }
     }
 
+    // validateAll2(){
+    //     let validate_row = this.spread.getRow(1);
+    //     console.log("validate_row: ", validate_row)
+    //     for(var key in validate_row){
+
+    //         if(validate_row[key].text != undefined){
+    //             console.log("CELL " + key)
+    //             let p1 = validate_row[key].text.split('\n'); //array with multiplevalidations
+    //             const r = /\[(.*?)\] (\w+) \[(.*?)\]/;
+    //             p1.forEach((valString) =>{
+    //                 if(valString.length > 0){
+    //                     let res = valString.match(r);
+    //                     if(res != null){
+    //                         let cat_list = res[1].split(',')
+    //                         let op = res[2]
+    //                         let val_list = res[3]
+    //                     }
+                        
+    //                 }
+    //             })
+    //         }
+    //     }
+    // }
+
 
     validate(attr,cat,vData){
         let {type,vInfo} = vData;
@@ -61,8 +85,7 @@ export class GDCTValidators2{
         
         if(isNaN(x) || isNaN(y)){return;}
 
-        console.log("validating cell %d %d for attr %s cat %s",x,y,attr,cat)
-        console.log(this.datas)
+        
         if(type === 'number'){
             let t = this.datas.getCell(x,y);
             if(t.text != undefined) {
