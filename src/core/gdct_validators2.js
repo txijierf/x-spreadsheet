@@ -52,29 +52,119 @@ export class GDCTValidators2{
         }
     }
 
-    // validateAll2(){
-    //     let validate_row = this.spread.getRow(1);
-    //     console.log("validate_row: ", validate_row)
-    //     for(var key in validate_row){
+    validateAll2(){
+        let validate_row = this.spread.getRow(1);
+        console.log("validate_row: ", validate_row)
+        for(var key in validate_row){
 
-    //         if(validate_row[key].text != undefined){
-    //             console.log("CELL " + key)
-    //             let p1 = validate_row[key].text.split('\n'); //array with multiplevalidations
-    //             const r = /\[(.*?)\] (\w+) \[(.*?)\]/;
-    //             p1.forEach((valString) =>{
-    //                 if(valString.length > 0){
-    //                     let res = valString.match(r);
-    //                     if(res != null){
-    //                         let cat_list = res[1].split(',')
-    //                         let op = res[2]
-    //                         let val_list = res[3]
-    //                     }
+            if(validate_row[key].text != undefined){
+                console.log("CELL " + key)
+                let p1 = validate_row[key].text.split(';'); //array with multiplevalidations
+                const r = /\((.*?)\) (\w+) \((.*?)\)/;
+                p1.forEach((valString) =>{    
+                    let res = valString.match(r);
+                    if(res != null){
+                        let cat_list = res[1].split(',')
+                        let op = res[2]
+                        let val_list = res[3]
                         
-    //                 }
-    //             })
-    //         }
-    //     }
-    // }
+                        this.applyValidations(cat_list,op,val_list,Number(key));
+                    }      
+                })
+            }
+        }
+    }
+
+    applyValidations(cat_list,operator,val,ci){
+        
+        let vdata = {}
+        let value; let type;
+        if(operator === 'be' || operator === 'nbe'){
+            value = val.split(' and ');
+            type = (isNaN(value[0]) || isNaN(value[1])) ? 'attribute' : 'number';
+        }
+        else if(operator === 'req'){
+            value = '';
+            type = 'required';
+        }
+        else{
+            value = val;
+            type = isNaN(value) ? 'attribute' : 'number';
+        }
+
+        vdata = {type,vInfo:{operator,value}}
+        
+
+        cat_list.forEach((cat) => {
+            if(cat.length > 0){console.log("applying validations to %s with info " , cat); this.validate2(ci,cat,vdata)}
+        })
+        
+    }
+
+    validate2(ci,cat,vData){
+        let {type,vInfo} = vData;
+        let y = ci;
+        
+        let x = Number(this.findCategoryRow(cat));
+        
+        if(isNaN(x) || isNaN(y)){return;}
+
+        if(type === 'number'){
+            let t = this.datas.getCell(x,y);
+            if(t.text != undefined) {
+                
+                if(!this.validateNumber(t.text,vInfo)){  
+                    console.log('error number set for %d &d', x,y);
+                    this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`);
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`); }
+                }
+                else{
+                    this.errors.delete(`${x}_${y}`);
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.clearNote(x,y);}
+                }
+            }
+        }
+        else if(type === 'attribute'){
+            let t = this.datas.getCell(x,y);
+           
+            if(t.text != undefined) {
+                console.log("hitting ", x,y);
+                if(!this.validateAttribute(t.text,vInfo,x)){ 
+                    console.log('error set for %d &d', x,y);
+                    this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`)
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`); console.log("note sett for %d %d", x , y)}
+                }
+                else{
+                    this.errors.delete(`${x}_${y}`);
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.clearNote(x,y);}
+                    
+                    
+                }
+            }
+        }
+        else if(type === 'required'){
+
+            let t = this.datas.getCell(x,y);
+            if(t) {
+                if(t.text === undefined || t.text === ''){
+                    this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`)
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`); console.log("Note SETTT");}
+                }
+                else{
+                    this.errors.delete(`${x}_${y}`);
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.clearNote(x,y);}
+                }
+            }
+        
+        }
+
+    }
 
 
     validate(attr,cat,vData){
@@ -172,7 +262,7 @@ export class GDCTValidators2{
 
 
     findCategoryRow(cat){
-       console.log(this.datas.rows._ )
+       
         for(let row_num in this.datas.rows._){
             let check_cell = this.datas.rows._[row_num].cells[this.search_col].text
             

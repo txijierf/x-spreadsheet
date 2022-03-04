@@ -409,7 +409,7 @@ export default class DataProxy {
 
   validateAll(){
     console.log("validate :)");
-    this.GDCTValidators2.validateAll();
+    this.GDCTValidators2.validateAll2();
   }
 
   addTypeValidator(ri, ci, type) {
@@ -1097,7 +1097,7 @@ export default class DataProxy {
     // validator
     
     //this.GDCTValidators.validateAll();
-    this.GDCTValidators2.validateAll();
+    //this.GDCTValidators2.validateAll();
     validations.validate(ri, ci, text);
   }
 
@@ -1225,7 +1225,7 @@ export default class DataProxy {
   resetCommentsandErrors(){
     this.comments = {}
     this.GDCTValidators2.clearErrors();
-    this.GDCTValidators2.validateAll();
+    this.GDCTValidators2.validateAll2();
   }
 
   // type: row | col
@@ -1311,6 +1311,14 @@ export default class DataProxy {
       }
     });
     return this;
+  }
+
+  getRow(rowNum){
+    let x = this.rows._[rowNum];
+    if(x == undefined){
+      return undefined;
+    }
+    return this.rows._[rowNum].cells;
   }
 
   getData() {
