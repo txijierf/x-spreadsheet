@@ -60,7 +60,7 @@ export class GDCTValidators2{
             if(validate_row[key].text != undefined){
                 console.log("CELL " + key)
                 let p1 = validate_row[key].text.split(';'); //array with multiplevalidations
-                const r = /\((.*?)\) (\w+) \((.*?)\)/;
+                const r = /\((.*?)\) (\w+) \((.*?)\) in \((.*?)\)/;
                 p1.forEach((valString) =>{    
                     let res = valString.match(r);
                     if(res != null){

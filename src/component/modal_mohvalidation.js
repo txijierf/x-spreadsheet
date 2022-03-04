@@ -233,7 +233,7 @@ export default class ModalMOHValidation extends Modal {
     // })
       
       this.addValDesc(operator);
-      this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.validateAll2();
+      //this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.validateAll2();
       
       this.hide();
       this.of.input.itemClick('req');
@@ -258,7 +258,9 @@ export default class ModalMOHValidation extends Modal {
 
     let spread_row = this.spread.datas[this.spread.getCurrentSheetIndex()].rows;
 
-    let line = "(" + this.categoryField.val() + ")" + " " + t + " " + "(" + desc+")" +';';
+    let sheetname = this.spread.datas[this.spread.getCurrentSheetIndex()].name;
+
+    let line = "(" + this.categoryField.val() + ")" + " " + t + " " + "(" + desc+") in (" + sheetname +");";
 
     if(this.selectAttributelist){
       this.selectAttributelist.forEach(attr_name => {
@@ -396,7 +398,7 @@ export default class ModalMOHValidation extends Modal {
   //       console.log("CELL " + key)
   //       let p1 = validate_row[key].text.split(';'); //array with multiplevalidations
   //       console.log(p1);
-  //       const r = /\((.*?)\) (\w+) \((.*?)\)/;
+  //       const r = /\((.*?)\) (\w+) \((.*?)\) in ((.*?)\)/;
   //       p1.forEach((valString) =>{
           
   //         if(valString.length > 0){
