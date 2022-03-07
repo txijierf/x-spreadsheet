@@ -7,6 +7,7 @@ export default class FormSelect {
     this.key = key;
     this.width = width;
     this.getTitle = getTitle;
+    this.change = change;
     this.vchange = () => {};
     this.el = h('div', `${cssPrefix}-form-select`);
     this.suggest = new Suggest(items.map(it => ({ key: it, title: this.getTitle(it) })), (it) => {
@@ -26,8 +27,29 @@ export default class FormSelect {
 
 
   itemClick(it) {
+    
     this.key = it;
     this.itemEl.html(this.getTitle(it));
+  }
+
+  setItems(itemlist, keyname){
+    this.items = itemlist;
+    this.key= keyname;
+
+    this.el.html("");
+
+    this.suggest = new Suggest(this.items.map(it => ({ key: it, title: this.getTitle(it) })), (it) => {
+      this.itemClick(it.key);
+      this.change(it.key);
+      this.vchange(it.key);
+    }, this.width, this.el);
+
+
+    this.el.children(
+      this.itemEl = h('div', 'input-text').html(this.getTitle(this.key)),
+      this.suggest.el,
+    ).on('click', () => this.show());
+
   }
 
   val(v) {

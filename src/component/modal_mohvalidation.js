@@ -65,9 +65,11 @@ export default class ModalMOHValidation extends Modal {
       new FormInput('70px', '10'),
       { required: true, type: 'number' },
     ).hide();
+
+    
     const sheetField = new FormField( // sheetName
-      new FormInput('70px', 'Balance Sheet'),
-      { required: false, type: 'text' },
+      new FormSelect('',[],"160px"),
+      { required: false},
       `${t('MOHValidation.sheetLabel')}`,
     );
 
@@ -233,7 +235,7 @@ export default class ModalMOHValidation extends Modal {
     // })
       
       this.addValDesc(operator);
-      //this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.validateAll2();
+      this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.validateAll2();
       
       this.hide();
       this.of.input.itemClick('req');
@@ -258,9 +260,9 @@ export default class ModalMOHValidation extends Modal {
 
     let spread_row = this.spread.datas[this.spread.getCurrentSheetIndex()].rows;
 
-    let sheetname = this.spread.datas[this.spread.getCurrentSheetIndex()].name;
+    let sheetname = this.sheetField.input.key;
 
-    let line = "(" + this.categoryField.val() + ")" + " " + t + " " + "(" + desc+") in (" + sheetname +");";
+    let line = "[" + this.categoryField.val() + "]" + " " + t + " " + "[" + desc+"] in [" + sheetname +"];";
 
     if(this.selectAttributelist){
       this.selectAttributelist.forEach(attr_name => {
@@ -374,12 +376,22 @@ export default class ModalMOHValidation extends Modal {
     return attrs;
   }
 
+
+  getSheetList(){
+    return this.spread.datas.map((sheetdata) => sheetdata.name);
+  }
+
   prepare(cellR){
     var attrList = this.getAttributeList2();
     var selectedAttr = this.selectedAtrributesandCategories(cellR,attrList);
+    var sheetlist = this.getSheetList();
+    
+    console.log("helllooooooo")
+    console.log("sheet list:", sheetlist);
     
     var nonselectedAttrs = attrList.filter(x => !(selectedAttr.includes(x)) );
     this.attributeList = attrList;
+    this.sheetField.input.setItems(sheetlist,this.spread.datas[this.spread.getCurrentSheetIndex()].name)
     this.valueField.input.setItems(nonselectedAttrs);
     this.min_value.input.setItems(nonselectedAttrs);
     this.max_value.input.setItems(nonselectedAttrs);
