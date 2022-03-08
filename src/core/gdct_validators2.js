@@ -67,15 +67,16 @@ export class GDCTValidators2{
                         let cat_list = res[1].split(',')
                         let op = res[2]
                         let val_list = res[3]
-                        
-                        this.applyValidations(cat_list,op,val_list,Number(key));
+                        let sheet_name = res[4]
+                        console.log(res)
+                        this.applyValidations(cat_list,op,val_list,Number(key), sheet_name);
                     }      
                 })
             }
         }
     }
 
-    applyValidations(cat_list,operator,val,ci){
+    applyValidations(cat_list,operator,val,ci,sheet_name){
         
         let vdata = {}
         let value; let type;
@@ -92,7 +93,7 @@ export class GDCTValidators2{
             type = isNaN(value) ? 'attribute' : 'number';
         }
 
-        vdata = {type,vInfo:{operator,value}}
+        vdata = {type,vInfo:{operator,value,sheet_name}}
         
 
         cat_list.forEach((cat) => {
@@ -105,7 +106,7 @@ export class GDCTValidators2{
         let {type,vInfo} = vData;
         let y = ci;
         
-        let x = Number(this.findCategoryRow(cat));
+        let x = Number(this.findCategoryRow(cat,this.datas));
         
         if(isNaN(x) || isNaN(y)){return;}
 
@@ -131,7 +132,7 @@ export class GDCTValidators2{
            
             if(t.text != undefined) {
                 console.log("hitting ", x,y);
-                if(!this.validateAttribute(t.text,vInfo,x)){ 
+                if(!this.validateAttribute(t.text,vInfo,x,cat)){ 
                     console.log('error set for %d &d', x,y);
                     this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`)
                     let sheet = this.spread.getSheet()
@@ -171,7 +172,7 @@ export class GDCTValidators2{
         let {type,vInfo} = vData;
         let y = Number(this.datas.rows.findInputColOnRow(this.search_row,attr));
         
-        let x = Number(this.findCategoryRow(cat));
+        let x = Number(this.findCategoryRow(cat,this.datas));
         
         if(isNaN(x) || isNaN(y)){return;}
 
@@ -261,10 +262,10 @@ export class GDCTValidators2{
     }
 
 
-    findCategoryRow(cat){
+    findCategoryRow(cat, d){
        
-        for(let row_num in this.datas.rows._){
-            let check_cell = this.datas.rows._[row_num].cells[this.search_col].text
+        for(let row_num in d.rows._){
+            let check_cell = d.rows._[row_num].cells[this.search_col].text
             
             if(check_cell === cat){
                 return row_num;
@@ -273,10 +274,21 @@ export class GDCTValidators2{
         return null
     }
 
+    
+
+    findAttrCol(attr, sn){
+        console.log("GGGGGGGGGG " + sn);
+        let d = this.spread.findDataSheetbyName(sn);
+        console.log("GGGGGGGGG3 " + d);
+        if(d === null){return undefined;}
+
+        return d.findInputColOnRow(9,attr)
+    }
 
 
-    validateAttribute(n,v,ri){
-        let {operator, value } = v;
+    validateAttribute(n,v,ri,cat){
+        let {operator, value,sheet_name } = v;
+        
         let pinput = Number(n);
 
 
@@ -302,10 +314,12 @@ export class GDCTValidators2{
             }
 
         }else{
-            let attrcol = this.datas.findInputColOnRow(9,value);
-            if(attrcol === undefined){return true}
-
-            let attrtext = this.datas.getCell(ri,Number(attrcol));
+            let sheetData = this.spread.findDataSheetbyName(sheet_name);
+            let attrcol = this.findAttrCol(value,sheet_name)//this.datas.findInputColOnRow(9,value);
+            let colrow = this.findCategoryRow(cat,this.spread.findDataSheetbyName(sheet_name))
+            if(attrcol === undefined || colrow === null ){return true; console.log("cant find")}
+            console.log("NINJA WE MADE IT !!!!!")
+            let attrtext = sheetData.getCell(colrow,Number(attrcol));
             console.log("hiii " + attrtext.text)
             if(attrtext.text === undefined){ return true;}
 
@@ -329,6 +343,9 @@ export class GDCTValidators2{
 
 
     }
+
+
+    
         
 
 
