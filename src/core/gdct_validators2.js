@@ -265,10 +265,15 @@ export class GDCTValidators2{
     findCategoryRow(cat, d){
        
         for(let row_num in d.rows._){
-            let check_cell = d.rows._[row_num].cells[this.search_col].text
+
+            if(d.rows._[row_num].cells[this.search_col] != undefined){
+
             
-            if(check_cell === cat){
-                return row_num;
+                let check_cell = d.rows._[row_num].cells[this.search_col].text
+                
+                if(check_cell === cat){
+                    return row_num;
+                }
             }
         }
         return null
