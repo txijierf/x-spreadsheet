@@ -235,7 +235,7 @@ export default class ModalMOHValidation extends Modal {
     // })
       
       this.addValDesc(operator);
-      this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.validateAll2();
+      //this.spread.datas[this.spread.getCurrentSheetIndex()].resetCommentsandErrors();
       
       this.hide();
       this.of.input.itemClick('req');

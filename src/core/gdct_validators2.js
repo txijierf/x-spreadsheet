@@ -118,13 +118,13 @@ export class GDCTValidators2{
                     console.log('error number set for %d &d', x,y);
                     this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`);
                     let sheet = this.spread.getSheet()
-                    if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`); }
+                    if(sheet){sheet.notes.addNote(x,y,`cell value must be ${vInfo.operator} ${vInfo.value}` + '\n'); }
                 }
-                else{
-                    this.errors.delete(`${x}_${y}`);
-                    let sheet = this.spread.getSheet()
-                    if(sheet){sheet.notes.clearNote(x,y);}
-                }
+                // else{
+                //     this.errors.delete(`${x}_${y}`);
+                //     let sheet = this.spread.getSheet()
+                //     if(sheet){sheet.notes.clearNote(x,y);}
+                // }
             }
         }
         else if(type === 'attribute'){
@@ -136,15 +136,15 @@ export class GDCTValidators2{
                     console.log('error set for %d &d', x,y);
                     this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`)
                     let sheet = this.spread.getSheet()
-                    if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`); console.log("note sett for %d %d", x , y)}
+                    if(sheet){sheet.notes.addNote(x,y,`cell value must be ${vInfo.operator} ${vInfo.value}` + '\n'); console.log("note sett for %d %d", x , y)}
                 }
-                else{
-                    this.errors.delete(`${x}_${y}`);
-                    let sheet = this.spread.getSheet()
-                    if(sheet){sheet.notes.clearNote(x,y);}
+                // else{
+                //     this.errors.delete(`${x}_${y}`);
+                //     let sheet = this.spread.getSheet()
+                //     if(sheet){sheet.notes.clearNote(x,y);}
                     
                     
-                }
+                // }
             }
         }
         else if(type === 'required'){
@@ -154,13 +154,13 @@ export class GDCTValidators2{
                 if(t.text === undefined || t.text === ''){
                     this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`)
                     let sheet = this.spread.getSheet()
-                    if(sheet){sheet.notes.setNote(x,y,`incorrect type, expected ${vInfo.operator} ${vInfo.value}`); console.log("Note SETTT");}
+                    if(sheet){sheet.notes.addNote(x,y,`cell must contain a value` + '\n'); console.log("Note SETTT");}
                 }
-                else{
-                    this.errors.delete(`${x}_${y}`);
-                    let sheet = this.spread.getSheet()
-                    if(sheet){sheet.notes.clearNote(x,y);}
-                }
+                // else{
+                //     this.errors.delete(`${x}_${y}`);
+                //     let sheet = this.spread.getSheet()
+                //     if(sheet){sheet.notes.clearNote(x,y);}
+                // }
             }
         
         }
