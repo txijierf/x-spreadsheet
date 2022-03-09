@@ -41,6 +41,21 @@ export default class Notes {
         }
     }
 
+    addNote(ri, ci, note) {
+        // this.activeIndexes = [ri, ci]
+        let x  = this.sheet.data.comments[`${ri}-${ci}`];
+
+        if(x == undefined){
+            this.sheet.data.comments[`${ri}-${ci}`] = note;
+        }
+        else{
+            this.sheet.data.comments[`${ri}-${ci}`] = x+ note;
+        }
+        for (let cb of this.updateCBs) {
+            cb(ri, ci);
+        }
+    }
+
     showNote(ri, ci, x) {
         // remove any previous children of el
         for (let child of this.el.children()) {
