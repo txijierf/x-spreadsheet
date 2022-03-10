@@ -269,7 +269,7 @@ export default class ModalMOHValidation extends Modal {
         var c = spread_row.findInputColOnRow(9,attr_name);
         if(c != undefined){
           let desc_cell = this.spread.datas[this.spread.getCurrentSheetIndex()].getCell(1,c);
-          if(desc_cell.text != undefined){
+          if(desc_cell != undefined && desc_cell.text != undefined){
             this.spread.datas[this.spread.getCurrentSheetIndex()].setCellText(1,c,desc_cell.text + line);
           }else{
             this.spread.datas[this.spread.getCurrentSheetIndex()].setCellText(1,c,line);
