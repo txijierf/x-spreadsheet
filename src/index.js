@@ -119,6 +119,18 @@ class Spreadsheet {
     return this.datas[this.getCurrentSheetIndex()].rows._[rowNum].cells;
   }
 
+  findDataSheetbyName(n){
+    
+    for(var sheetData in this.datas){
+      
+
+      if(this.datas[sheetData].name == n){
+        return this.datas[sheetData];
+      }
+    }
+    return null;
+  }
+
   // Insert a col in Sheet at rowNum
   // added by Sheldon Su 2021/02/23
   insertColAt(colNum){

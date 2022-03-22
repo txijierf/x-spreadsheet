@@ -52,36 +52,127 @@ export class GDCTValidators2{
         }
     }
 
-    // validateAll2(){
-    //     let validate_row = this.spread.getRow(1);
-    //     console.log("validate_row: ", validate_row)
-    //     for(var key in validate_row){
+    validateAll2(){
+        let validate_row = this.spread.getRow(1);
+        console.log("validate_row: ", validate_row)
+        for(var key in validate_row){
 
-    //         if(validate_row[key].text != undefined){
-    //             console.log("CELL " + key)
-    //             let p1 = validate_row[key].text.split('\n'); //array with multiplevalidations
-    //             const r = /\[(.*?)\] (\w+) \[(.*?)\]/;
-    //             p1.forEach((valString) =>{
-    //                 if(valString.length > 0){
-    //                     let res = valString.match(r);
-    //                     if(res != null){
-    //                         let cat_list = res[1].split(',')
-    //                         let op = res[2]
-    //                         let val_list = res[3]
-    //                     }
-                        
-    //                 }
-    //             })
-    //         }
-    //     }
-    // }
+            if(validate_row[key].text != undefined){
+                console.log("CELL " + key)
+                let p1 = validate_row[key].text.split(';'); //array with multiplevalidations
+                const r = /\[(.*?)\] (\w+) \[(.*?)\] in \[(.*?)\]/;
+                p1.forEach((valString) =>{    
+                    let res = valString.match(r);
+                    if(res != null){
+                        let cat_list = res[1].split(',')
+                        let op = res[2]
+                        let val_list = res[3]
+                        let sheet_name = res[4]
+                        console.log(res)
+                        this.applyValidations(cat_list,op,val_list,Number(key), sheet_name);
+                    }      
+                })
+            }
+        }
+    }
+
+    applyValidations(cat_list,operator,val,ci,sheet_name){
+        
+        let vdata = {}
+        let value; let type;
+        if(operator === 'be' || operator === 'nbe'){
+            value = val.split(' and ');
+            type = (isNaN(value[0]) || isNaN(value[1])) ? 'attribute' : 'number';
+        }
+        else if(operator === 'req'){
+            value = '';
+            type = 'required';
+        }
+        else{
+            value = val;
+            type = isNaN(value) ? 'attribute' : 'number';
+        }
+
+        vdata = {type,vInfo:{operator,value,sheet_name}}
+        
+
+        cat_list.forEach((cat) => {
+            if(cat.length > 0){console.log("applying validations to %s with info " , cat); this.validate2(ci,cat,vdata)}
+        })
+        
+    }
+
+    validate2(ci,cat,vData){
+        let {type,vInfo} = vData;
+        let y = ci;
+        
+        let x = Number(this.findCategoryRow(cat,this.datas));
+        
+        if(isNaN(x) || isNaN(y)){return;}
+
+        if(type === 'number'){
+            let t = this.datas.getCell(x,y);
+            if(t.text != undefined) {
+                
+                if(!this.validateNumber(t.text,vInfo)){  
+                    console.log('error number set for %d &d', x,y);
+                    this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`);
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.addNote(x,y,`cell value must be ${vInfo.operator} ${vInfo.value}` + '\n'); }
+                }
+                // else{
+                //     this.errors.delete(`${x}_${y}`);
+                //     let sheet = this.spread.getSheet()
+                //     if(sheet){sheet.notes.clearNote(x,y);}
+                // }
+            }
+        }
+        else if(type === 'attribute'){
+            let t = this.datas.getCell(x,y);
+           
+            if(t.text != undefined) {
+                console.log("hitting ", x,y);
+                if(!this.validateAttribute(t.text,vInfo,x,cat)){ 
+                    console.log('error set for %d &d', x,y);
+                    this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`)
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.addNote(x,y,`cell value must be ${vInfo.operator} ${vInfo.value}` + '\n'); console.log("note sett for %d %d", x , y)}
+                }
+                // else{
+                //     this.errors.delete(`${x}_${y}`);
+                //     let sheet = this.spread.getSheet()
+                //     if(sheet){sheet.notes.clearNote(x,y);}
+                    
+                    
+                // }
+            }
+        }
+        else if(type === 'required'){
+
+            let t = this.datas.getCell(x,y);
+            if(t) {
+                if(t.text === undefined || t.text === ''){
+                    this.errors.set(`${x}_${y}`, `incorrect type, expected ${vInfo.operator} ${vInfo.value}`)
+                    let sheet = this.spread.getSheet()
+                    if(sheet){sheet.notes.addNote(x,y,`cell must contain a value` + '\n'); console.log("Note SETTT");}
+                }
+                // else{
+                //     this.errors.delete(`${x}_${y}`);
+                //     let sheet = this.spread.getSheet()
+                //     if(sheet){sheet.notes.clearNote(x,y);}
+                // }
+            }
+        
+        }
+
+    }
 
 
     validate(attr,cat,vData){
         let {type,vInfo} = vData;
         let y = Number(this.datas.rows.findInputColOnRow(this.search_row,attr));
         
-        let x = Number(this.findCategoryRow(cat));
+        let x = Number(this.findCategoryRow(cat,this.datas));
         
         if(isNaN(x) || isNaN(y)){return;}
 
@@ -171,22 +262,38 @@ export class GDCTValidators2{
     }
 
 
-    findCategoryRow(cat){
-       console.log(this.datas.rows._ )
-        for(let row_num in this.datas.rows._){
-            let check_cell = this.datas.rows._[row_num].cells[this.search_col].text
+    findCategoryRow(cat, d){
+       
+        for(let row_num in d.rows._){
+
+            if(d.rows._[row_num].cells[this.search_col] != undefined){
+
             
-            if(check_cell === cat){
-                return row_num;
+                let check_cell = d.rows._[row_num].cells[this.search_col].text
+                
+                if(check_cell === cat){
+                    return row_num;
+                }
             }
         }
         return null
     }
 
+    
+
+    findAttrCol(attr, sn){
+        console.log("GGGGGGGGGG " + sn);
+        let d = this.spread.findDataSheetbyName(sn);
+        console.log("GGGGGGGGG3 " + d);
+        if(d === null){return undefined;}
+
+        return d.findInputColOnRow(9,attr)
+    }
 
 
-    validateAttribute(n,v,ri){
-        let {operator, value } = v;
+    validateAttribute(n,v,ri,cat){
+        let {operator, value,sheet_name } = v;
+        
         let pinput = Number(n);
 
 
@@ -212,10 +319,12 @@ export class GDCTValidators2{
             }
 
         }else{
-            let attrcol = this.datas.findInputColOnRow(9,value);
-            if(attrcol === undefined){return true}
-
-            let attrtext = this.datas.getCell(ri,Number(attrcol));
+            let sheetData = this.spread.findDataSheetbyName(sheet_name);
+            let attrcol = this.findAttrCol(value,sheet_name)//this.datas.findInputColOnRow(9,value);
+            let colrow = this.findCategoryRow(cat,this.spread.findDataSheetbyName(sheet_name))
+            if(attrcol === undefined || colrow === null ){return true; console.log("cant find")}
+            console.log("NINJA WE MADE IT !!!!!")
+            let attrtext = sheetData.getCell(colrow,Number(attrcol));
             console.log("hiii " + attrtext.text)
             if(attrtext.text === undefined){ return true;}
 
@@ -239,6 +348,9 @@ export class GDCTValidators2{
 
 
     }
+
+
+    
         
 
 
