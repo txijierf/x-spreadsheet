@@ -225,9 +225,9 @@ const evalSuffixExpr = (srcStack, formulaMap, cellRender, cellList, zIndex=undef
 };
 
 const cellRender = (src, formulaMap, getCellText, cellList = [], zIndex = undefined) => {
-  if(src.indexOf('=ABS(') == 0 && src.at(-1) == ')'){
+ if(typeof src === 'string' && src.indexOf('=ABS(') == 0 && src.at(-1) == ')'){
     var testString = src.substring(5,src.length-1)
-    
+    //console.log(src, testString)
     const stack = infixExprToSuffixExpr(testString);
     console.log(stack)
     if (stack.length <= 0) return src;
