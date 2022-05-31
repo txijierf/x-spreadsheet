@@ -85,6 +85,10 @@ export default class ConditionFactory {
           // something unexpected here so we apply style
           return true;
         }
+        else if(!this.isNumber(exprVal1)){
+         
+          return false;
+        }
         return Math.abs(exprVal1) > Math.abs(exprVal2) && text === '';
       },
       style
