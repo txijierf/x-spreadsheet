@@ -225,7 +225,23 @@ const evalSuffixExpr = (srcStack, formulaMap, cellRender, cellList, zIndex=undef
 };
 
 const cellRender = (src, formulaMap, getCellText, cellList = [], zIndex = undefined) => {
-  if (src[0] === '=') {
+  if(src.indexOf('=ABS(') == 0 && src.at(-1) == ')'){
+    var testString = src.substring(5,src.length-1)
+    
+    const stack = infixExprToSuffixExpr(testString);
+    console.log(stack)
+    if (stack.length <= 0) return src;
+    return Math.abs(evalSuffixExpr(
+      stack,
+      formulaMap,
+      (x, y, z) => cellRender(getCellText(x, y, z), formulaMap, getCellText, cellList, zIndex=z),
+      cellList,
+      zIndex
+    ));
+
+  }
+
+  else if (src[0] === '=') {
     const stack = infixExprToSuffixExpr(src.substring(1));
     if (stack.length <= 0) return src;
     return evalSuffixExpr(
