@@ -81,7 +81,7 @@ export default class ConditionFactory {
       (text) => {
         const exprVal1 = this.getExpressionValue(val1);
         const exprVal2 = this.getExpressionValue(val2);
-        if (!this.isNumber(exprVal1) || !this.isNumber(exprVal2)) {
+        if (!this.isNumber(exprVal1) && !this.isNumber(exprVal2)) {
           // something unexpected here so we apply style
           return true;
         }
