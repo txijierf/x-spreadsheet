@@ -11,45 +11,34 @@ import './index.less';
 class Spreadsheet {
   constructor(selectors, options = {}) {
     let targetEl = selectors;
-    this.options = options;
+    this.options = { showBottomBar: true, ...options };
     this.sheetIndex = 1;
     this.datas = [];
     if (typeof selectors === 'string') {
       targetEl = document.querySelector(selectors);
     }
-
-    if (this.options.mode == 'edit'){
-      this.bottombar = new Bottombar(() => {
-        const d = this.addSheet();
-        this.sheet.resetData(d);
-      }, (index) => {
-        const d = this.datas[index];
-        this.sheet.resetData(d);
-      }, () => {
-        this.deleteSheet();
-      }, (index, value) => {
-        this.datas[index].name = value;
-      });
-    }else{
-      this.bottombar = new Bottombar(() => {
-      }, (index) => {
-        const d = this.datas[index];
-        this.sheet.resetData(d);
-      }, () => {
-       
-      }, (index, value) => {
-        this.datas[index].name = value;
-      });
-    }
+    this.bottombar = this.options.showBottomBar ? new Bottombar(() => {
+      if (this.options.mode === 'read') return;
+      const d = this.addSheet();
+      this.sheet.resetData(d);
+    }, (index) => {
+      const d = this.datas[index];
+      this.sheet.resetData(d);
+    }, () => {
+      this.deleteSheet();
+    }, (index, value) => {
+      this.datas[index].name = value;
+      this.sheet.trigger('change');
+    }) : null;
     this.data = this.addSheet();
     const rootEl = h('div', `${cssPrefix}`)
       .on('contextmenu', evt => evt.preventDefault());
     // create canvas element
     targetEl.appendChild(rootEl.el);
-
     this.sheet = new Sheet(rootEl, this.data, this);
-    this.julien_spreadsheet_flag = true;
-    rootEl.child(this.bottombar.el);
+    if (this.bottombar !== null) {
+      rootEl.child(this.bottombar.el);
+    }
   }
 
   addSheet(name, active = true) {
@@ -59,23 +48,30 @@ class Spreadsheet {
       this.sheet.trigger('change', ...args);
     };
     this.datas.push(d);
-    
-    this.bottombar.addItem(n, active);
+    // console.log('d:', n, d, this.datas);
+    if (this.bottombar !== null) {
+      this.bottombar.addItem(n, active, this.options);
+    }
     this.sheetIndex += 1;
     return d;
   }
 
   deleteSheet() {
+    if (this.bottombar === null) return;
+
     const [oldIndex, nindex] = this.bottombar.deleteItem();
     if (oldIndex >= 0) {
       this.datas.splice(oldIndex, 1);
       if (nindex >= 0) this.sheet.resetData(this.datas[nindex]);
+      this.sheet.trigger('change');
     }
   }
 
   loadData(data) {
     const ds = Array.isArray(data) ? data : [data];
-    this.bottombar.clear();
+    if (this.bottombar !== null) {
+      this.bottombar.clear();
+    }
     this.datas = [];
     if (ds.length > 0) {
       for (let i = 0; i < ds.length; i += 1) {

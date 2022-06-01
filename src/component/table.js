@@ -74,6 +74,7 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = ()
     draw.strokeBorders(dbox);
   }
   draw.rect(dbox, () => {
+<<<<<<< HEAD
     // render text and set cell evaluate result
     let cellText = "";
     if(!data.settings.evalPaused) {
@@ -85,6 +86,12 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = ()
       }else{
         delete cell.formulaValue;
       }
+=======
+    // render text
+    let cellText = '';
+    if (!data.settings.evalPaused) {
+      cellText = _cell.render(cell.text || '', formulam, (y, x) => (data.getCellTextOrDefault(x, y)));
+>>>>>>> 55752b79393a24557f6d8ad0ae27fe4189065587
     } else {
       cellText = cell.text || '';
     }
@@ -279,7 +286,7 @@ function renderContentGrid({
   // const sumWidth = cols.sumWidth(sci, eci + 1);
   // const sumHeight = rows.sumHeight(sri, eri + 1);
   // console.log('sumWidth:', sumWidth);
-  draw.clearRect(0, 0, w, h);
+  // draw.clearRect(0, 0, w, h);
   if (!settings.showGrid) {
     draw.restore();
     return;

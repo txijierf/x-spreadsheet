@@ -229,7 +229,7 @@ const cellRender = (src, formulaMap, getCellText, cellList = [], zIndex = undefi
     var testString = src.substring(5,src.length-1)
     //console.log(src, testString)
     const stack = infixExprToSuffixExpr(testString);
-    console.log(stack)
+    //console.log(stack)
     if (stack.length <= 0) return src;
     return Math.abs(evalSuffixExpr(
       stack,
