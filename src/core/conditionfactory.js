@@ -86,7 +86,7 @@ export default class ConditionFactory {
           return true;
         }
         else if(!this.isNumber(exprVal1)){
-          console.log("hit ")
+          //console.log("hit ")
           return false;
         }
         return Math.abs(exprVal1) > Math.abs(exprVal2) && text === '';
