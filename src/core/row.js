@@ -366,6 +366,8 @@ class Rows {
   }
 
   deleteColumn(sci, eci) {
+    console.log("sci: " + sci + " eci: " + eci);
+
     const n = eci - sci + 1;
     this.each((ri, row) => {
       const rndata = {};
@@ -376,6 +378,7 @@ class Rows {
         } else if (nci > eci) {
           rndata[nci - n] = cell;
           if (cell.text && cell.text[0] === '=') {
+            //console.log('hi')
             cell.text = cell.text.replace(/[a-zA-Z]{1,3}\d+/g, word => expr2expr(word, -n, 0, x => x > eci));
           }
         }
