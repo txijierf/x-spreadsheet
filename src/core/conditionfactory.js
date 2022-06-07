@@ -89,6 +89,9 @@ export default class ConditionFactory {
           //console.log("hit ")
           return false;
         }
+        else if(typeof text != 'string'){
+          return false
+        }
         return Math.abs(exprVal1) > Math.abs(exprVal2) && text.replace(/(\r\n|\n|\r)/gm, "") === '';
       },
       style
