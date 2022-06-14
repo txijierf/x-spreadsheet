@@ -1,4 +1,5 @@
 import ConditionFactory from "./conditionfactory";
+import alphabet, { xy2expr } from "./alphabet";
 
 // middleman for conditional formatting - makes setting up easier/less verbose
 export default class ConditionFormatter {
@@ -6,6 +7,7 @@ export default class ConditionFormatter {
     this.ConditionFactory = new ConditionFactory(rows, getCellText);
     this.conditionalFormatting = [];
     // for reading and writing data -> template: { functionName: str, params: [] }
+    this.variances = {};
     this.formattingData = [];
   }
 
@@ -37,6 +39,31 @@ export default class ConditionFormatter {
     });
   }
 
+  attemptFix(rindex, cindex, findex){
+    //console.log(this.variances,this.variances[rindex],findex)
+    if(this.variances[rindex] != undefined && this.variances[rindex][findex] != undefined){
+      //console.log('XDDDDDDD')
+      ///console.log(rindex,rindex,cindex,cindex,'=' + xy2expr(cindex-1,rindex-1).toLocaleLowerCase(), this.variances[rindex][findex],{bgcolor: '#FFEF00'})
+      //this.addOtherGreaterThan(rindex,rindex,cindex,cindex,'=' + xy2expr(cindex-1,rindex).toLocaleLowerCase(), this.variances[rindex][findex],{bgcolor: '#FFEF00'})
+
+      this.conditionalFormatting.push(this.ConditionFactory.otherGreaterThan( rindex,rindex,cindex,cindex,'=' + xy2expr(cindex-1,rindex).toLocaleLowerCase(), this.variances[rindex][findex],{bgcolor: '#FFEF00'}))
+      this.addFormattingData("addOtherGreaterThan", [rindex,rindex,cindex,cindex,'=' + xy2expr(cindex-1,rindex).toLocaleLowerCase(), this.variances[rindex][findex],{bgcolor: '#FFEF00'}])
+    }
+    
+  }
+
+  hasConditional(x,y,fName){
+
+    for(var f in this.formattingData){
+      
+      if(this.formattingData[f].functionName === fName && this.formattingData[f].params[0] == x && this.formattingData[f].params[2] == y){
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   addOtherGreaterThan(minRi, maxRi, minCi, maxCi, val1, val2, style) {
     // console.log('MY ARGS', arguments)
     this.conditionalFormatting.push(
@@ -59,6 +86,13 @@ export default class ConditionFormatter {
       val2,
       style,
     ]);
+    if(this.variances[minRi]){
+      this.variances[minRi].push(val2)
+
+    }
+    else{
+      this.variances[minRi] = [val2]
+    }
   }
 
   // functions to create conditions

@@ -49,6 +49,16 @@ function renderCellBorders(bboxes, translateFunc) {
 }
 */
 
+export function howManyPrevNotes(cindex,data){
+  var count = 0;
+  for(var i = cindex; i>-1; i--){
+    if(data.getCellOrNew(9,i).text == 'Note'){
+      count++;
+    }
+  }
+  return count;
+}
+
 export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = () => false) {
   const { sortedRowMap, rows, cols } = data;
   if (rows.isHide(rindex) || cols.isHide(cindex)) return;
@@ -65,6 +75,12 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = ()
     frozen = true;
   }
   
+  
+  if(data.getCellOrNew(9, cindex).text === 'Note' && !data.ConditionFormatter.hasConditional(rindex,cindex,'addOtherGreaterThan') ) {
+    
+    
+    data.ConditionFormatter.attemptFix(rindex,cindex, howManyPrevNotes(cindex-1,data))
+  }
   const style = data.getCellStyleOrDefault(nrindex, cindex);
   const dbox = getDrawBox(data, rindex, cindex, yoffset);
   dbox.bgcolor = style.bgcolor;
@@ -76,8 +92,15 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = ()
   draw.rect(dbox, () => {
     // render text and set cell evaluate result
     let cellText = "";
+
+    
     if(!data.settings.evalPaused) {
       const evalResult = _cell.render(cell.text || '', formulam, (y, x, z) => (data.getCellTextOrDefault(x, y, z)));
+      //console.log(typeof evalResult)
+      if(data.getCellOrNew(9, cindex).text === 'Variance' && rindex>9 && isNaN(evalResult) == false && evalResult != ''){
+        console.log(evalResult)
+        console.log('xdd');
+      }
       //console.log(evalResult,cell ,rindex, cindex)
       cellText = Object.is(evalResult, NaN)? 'NA': evalResult;
       if (cell.text !== evalResult && evalResult != ''){
