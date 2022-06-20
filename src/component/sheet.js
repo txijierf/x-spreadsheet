@@ -848,6 +848,7 @@ function sheetInitEvents() {
           evt.preventDefault();
           break;
         case 8: // backspace
+          console.log("hit")
           insertDeleteRowColumn.call(this, 'delete-cell-text');
           evt.preventDefault();
           break;
@@ -856,6 +857,7 @@ function sheetInitEvents() {
       }
 
       if (key === 'Delete') {
+        console.log("hit")
         insertDeleteRowColumn.call(this, 'delete-cell-text');
         evt.preventDefault();
       } else if ((keyCode >= 65 && keyCode <= 90)

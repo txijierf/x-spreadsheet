@@ -394,12 +394,19 @@ class Rows {
     });
   }
 
+  isVarianceColumn(ri,ci){
+    var isVar = this.getCellOrNew(9,ci);
+    var thisCell = this.getCellOrNew(ri,ci)
+    console.log(isVar,thisCell)
+    return isVar.text === "Variance" && thisCell.formulaValue != undefined;
+  }
+
   // what: all | text | format | merge
   deleteCell(ri, ci, what = 'all') {
     const row = this.get(ri);
     if (row !== null) {
       const cell = this.getCell(ri, ci);
-      if (cell !== null) {
+      if (cell !== null && !this.isVarianceColumn(ri,ci)) {
         if (what === 'all') {
           delete row.cells[ci];
         } else if (what === 'text') {
