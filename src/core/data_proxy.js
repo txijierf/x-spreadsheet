@@ -342,6 +342,7 @@ export default class DataProxy {
     this.GDCTValidators = new GDCTValidators(this, spread);
     this.GDCTValidators2 = new GDCTValidators2(this,spread);
     this.UnitValidation = new UnitValidation(this,spread);
+    this.variances = []; 
     //this.GDCTValidators.addTypeValidator(15, 2, '$')
     this.hyperlinks = {};
     this.comments = {};
