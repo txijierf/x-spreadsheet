@@ -39,17 +39,34 @@ export default class ConditionFormatter {
     });
   }
 
-  attemptFix(rindex, cindex, findex){
+  attemptFix(rindex, cindex, findex, data){
     //console.log(this.variances,this.variances[rindex],findex)
     if(this.variances[rindex] != undefined && this.variances[rindex][findex] != undefined){
-      //console.log('XDDDDDDD')
-      ///console.log(rindex,rindex,cindex,cindex,'=' + xy2expr(cindex-1,rindex-1).toLocaleLowerCase(), this.variances[rindex][findex],{bgcolor: '#FFEF00'})
-      //this.addOtherGreaterThan(rindex,rindex,cindex,cindex,'=' + xy2expr(cindex-1,rindex).toLocaleLowerCase(), this.variances[rindex][findex],{bgcolor: '#FFEF00'})
+    
 
       this.conditionalFormatting.push(this.ConditionFactory.otherGreaterThan( rindex,rindex,cindex,cindex,'=' + xy2expr(cindex-1,rindex).toLocaleLowerCase(), this.variances[rindex][findex],{bgcolor: '#FFEF00'}))
       this.addFormattingData("addOtherGreaterThan", [rindex,rindex,cindex,cindex,'=' + xy2expr(cindex-1,rindex).toLocaleLowerCase(), this.variances[rindex][findex],{bgcolor: '#FFEF00'}])
+      //console.log(this.conditionalFormatting)
+      //console.log(this.formattingData)
+
+  
     }
+    return
     
+  }
+
+  removeConditional(rindex,cindex){
+
+    for(var formatIndex = 0; formatIndex< this.formattingData.length; formatIndex++){
+      var ridx = this.formattingData[formatIndex].params[0]
+      var cidx = this.formattingData[formatIndex].params[2]
+      if(rindex == ridx && cindex == cidx){
+        this.formattingData.splice(formatIndex,1)
+        this.conditionalFormatting.splice(formatIndex,1)
+      }
+    }
+
+    return
   }
 
   hasConditional(x,y,fName){

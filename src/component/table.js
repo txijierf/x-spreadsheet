@@ -79,7 +79,10 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = ()
   if(data.getCellOrNew(9, cindex).text === 'Note' && !data.ConditionFormatter.hasConditional(rindex,cindex,'addOtherGreaterThan') ) {
     
     
-    data.ConditionFormatter.attemptFix(rindex,cindex, howManyPrevNotes(cindex-1,data))
+    data.ConditionFormatter.attemptFix(rindex,cindex, howManyPrevNotes(cindex-1,data),data)
+  }
+  else if(data.getCellOrNew(9, cindex).text != 'Note' && data.ConditionFormatter.hasConditional(rindex,cindex,'addOtherGreaterThan')){
+    data.ConditionFormatter.removeConditional(rindex,cindex)
   }
   const style = data.getCellStyleOrDefault(nrindex, cindex);
   const dbox = getDrawBox(data, rindex, cindex, yoffset);
@@ -97,10 +100,7 @@ export function renderCell(draw, data, rindex, cindex, yoffset = 0, hasNote = ()
     if(!data.settings.evalPaused) {
       const evalResult = _cell.render(cell.text || '', formulam, (y, x, z) => (data.getCellTextOrDefault(x, y, z)));
       //console.log(typeof evalResult)
-      if(data.getCellOrNew(9, cindex).text === 'Variance' && rindex>9 && isNaN(evalResult) == false && evalResult != ''){
-        console.log(evalResult)
-        console.log('xdd');
-      }
+     
       //console.log(evalResult,cell ,rindex, cindex)
       cellText = Object.is(evalResult, NaN)? 'NA': evalResult;
       if (cell.text !== evalResult && evalResult != ''){
