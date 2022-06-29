@@ -236,7 +236,7 @@ export default class ModalMOHValidation extends Modal {
     //this.spread.addOtherGreaterThan(10,10,8,8,'=h11',0.5,{bgcolor: '#FFEF00'},this.spread.getCurrentSheetIndex())
       
       this.addValDesc(operator);
-      //this.spread.datas[this.spread.getCurrentSheetIndex()].resetCommentsandErrors();
+      console.log(this.spread.datas[this.spread.getCurrentSheetIndex()])
       
       this.hide();
       this.of.input.itemClick('req');
