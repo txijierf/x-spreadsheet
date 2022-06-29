@@ -10,6 +10,7 @@ import ContextMenu from './contextmenu';
 import Table from './table';
 import Toolbar from './toolbar/index';
 import ModalValidation from './modal_validation';
+import deletePopup from './delete_popup';
 import ModalMOHValidation from './modal_mohvalidation';
 import ModalConditional from './modal_conditional';
 import SortFilter from './sort_filter';
@@ -496,7 +497,7 @@ function dataSetCellText(text, state = 'finished') {
 }
 
 function insertDeleteRowColumn(type) {
-  const { data } = this;
+  const { data,DeletePopup } = this;
   if (data.settings.mode === 'read') return;
   if (type === 'insert-row') {
     data.insert('row');
@@ -505,7 +506,14 @@ function insertDeleteRowColumn(type) {
   } else if (type === 'insert-column') {
     data.insert('column');
   } else if (type === 'delete-column') {
-    data.delete('column');
+    let check = data.isValidationColumn();
+    if(check != -1){
+      DeletePopup.validation_location = check;
+      
+      DeletePopup.show();
+    }else{
+      data.delete('column');
+    }
   } else if (type === 'delete-cell') {
     data.deleteCell();
   } else if (type === 'delete-cell-format') {
@@ -591,6 +599,7 @@ function sheetInitEvents() {
     modalMOHValidation,
     notes,
     modalConditional,
+    DeletePopup,
     sortFilter,
   } = this;
   // overlayer
@@ -902,6 +911,7 @@ export default class Sheet {
     this.modalValidation = new ModalValidation();
     // MOH validation
     this.modalMOHValidation = new ModalMOHValidation(this.spread);
+    this.DeletePopup = new deletePopup(this.spread);
     // Notes store.. has is moved?
     // this.notes = new Notes(() => this.getRect(), () => this.selector.l.areaEl.el, () => this.selector.indexes);
     // modal for conditional formatting
@@ -933,6 +943,7 @@ export default class Sheet {
       this.contextMenu.el,
       this.modalValidation.el,
       this.modalMOHValidation.el,
+      this.DeletePopup.el,
       this.modalConditional.el,
       this.notes.el,
       this.sortFilter.el,

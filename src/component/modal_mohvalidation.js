@@ -401,28 +401,6 @@ export default class ModalMOHValidation extends Modal {
   }
 
 
-  // randomFunction(s){
-   
-  //   let validate_row = this.spread.getRow(1);
-  //   console.log("validate_row: ", validate_row)
-  //   for(var key in validate_row){
-
-  //     if(validate_row[key].text != undefined){
-  //       console.log("CELL " + key)
-  //       let p1 = validate_row[key].text.split(';'); //array with multiplevalidations
-  //       console.log(p1);
-  //       const r = /\((.*?)\) (\w+) \((.*?)\) in ((.*?)\)/;
-  //       p1.forEach((valString) =>{
-          
-  //         if(valString.length > 0){
-  //           let res = valString.match(r);
-  //           console.log(res)
-           
-  //         }
-  //       })
-  //     }
-  //   }
-
 
 
     

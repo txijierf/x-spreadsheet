@@ -11,7 +11,7 @@ import { Rows } from './row';
 import { Cols } from './col';
 import { Validations } from './validation';
 import { CellRange } from './cell_range';
-import { expr2xy, xy2expr } from './alphabet';
+import { expr2xy, stringAt, xy2expr } from './alphabet';
 import { t } from '../locale/locale';
 import { GDCTValidators } from './gdct_validators';
 import { GDCTValidators2 } from './gdct_validators2';
@@ -402,6 +402,36 @@ export default class DataProxy {
     const { ri, ci } = this.selector;
     const v = this.validations.get(ri, ci);
     return v ? v.validator : null;
+  }
+
+  isValidationColumn(){
+    const { rows,selector, cols} = this;
+    let {
+      sri, sci, eri, eci,
+    } = selector.range;
+
+    let columnString = stringAt(sci)
+    console.log(sci,eci,eri,sri,stringAt(sci));
+    var check_row = rows.getOrNew(9);
+    console.log(check_row)
+    for(var attridx in check_row.cells){
+      console.log(check_row.cells[attridx])
+      if(check_row.cells[attridx] && check_row.cells[attridx].text && check_row.cells[attridx].text === 'Validation'){
+        //console.log('XD')
+        for(var i = 10;i< eri;i++){
+          let x = this.rows.getCellOrNew(i,Number(attridx)); 
+          //console.log(Number(attridx),i);
+         // console.log(x)
+          if((x.text && x.text.at(0) === '=' && x.text.includes(columnString))   || (x.formulaValue && x.formulaValue.includes(columnString))){
+            console.log(Number(attridx))
+            return Number(attridx);
+          }
+          
+        }
+      }
+    }
+
+    return -1;
   }
 
   addGDCTValidaton(cellR,type ,validator){
