@@ -42,7 +42,7 @@ export default {
     deleteCellText: 'Delete cell text',
     validation: 'Data validations',
     'moh-validation': 'MOH Data Validation',
-    'delete-popup': 'hehexd123',
+    'delete-popup': 'This column is used in a variance calculation. Deleting this column will also remove the variance column associated as well. Would you still like ton remove?',
     cellprintable: 'Enable export',
     cellnonprintable: 'Disable export',
     celleditable: 'Enable editing',

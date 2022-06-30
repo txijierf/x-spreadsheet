@@ -506,7 +506,7 @@ function insertDeleteRowColumn(type) {
   } else if (type === 'insert-column') {
     data.insert('column');
   } else if (type === 'delete-column') {
-    let check = data.isValidationColumn();
+    let check = data.isVarianceColumn();
     if(check != -1){
       DeletePopup.validation_location = check;
       

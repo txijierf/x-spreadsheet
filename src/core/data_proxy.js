@@ -404,7 +404,7 @@ export default class DataProxy {
     return v ? v.validator : null;
   }
 
-  isValidationColumn(){
+  isVarianceColumn(){
     const { rows,selector, cols} = this;
     let {
       sri, sci, eri, eci,
@@ -416,7 +416,7 @@ export default class DataProxy {
     console.log(check_row)
     for(var attridx in check_row.cells){
       console.log(check_row.cells[attridx])
-      if(check_row.cells[attridx] && check_row.cells[attridx].text && check_row.cells[attridx].text === 'Validation'){
+      if(check_row.cells[attridx] && check_row.cells[attridx].text && check_row.cells[attridx].text === 'Variance'){
         //console.log('XD')
         for(var i = 10;i< eri;i++){
           let x = this.rows.getCellOrNew(i,Number(attridx)); 

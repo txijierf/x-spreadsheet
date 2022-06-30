@@ -207,7 +207,7 @@ export default class ModalMOHValidation extends Modal {
       }
       
 
-      console.log("hi we are saving");
+      
       
       //this.spread.datas[this.spread.getCurrentSheetIndex()].addGDCTValidaton(this.cellRange,type,{operator,value});
       //this.spread.datas[this.spread.getCurrentSheetIndex()].GDCTValidators2.addValidation(this.selectAttributelist,this.selectCategories,type, {operator,value})
@@ -297,7 +297,7 @@ export default class ModalMOHValidation extends Modal {
 
     this.spread.datas.forEach((d) => console.log(d.getRow(9)));
 
-    //console.log(this.spread.datas[this.spread.getCurrentSheetIndex()].getRow(9));
+    
     var attribute_list = []
     var a2 = []
     if(attribute_data_row === undefined){return a2;}
@@ -310,7 +310,7 @@ export default class ModalMOHValidation extends Modal {
       }
     } );
     
-    //console.log(a2);
+    
     return a2;
   }
 
@@ -406,7 +406,7 @@ export default class ModalMOHValidation extends Modal {
     
 
 
-  // }
+  
 
   // validation: { mode, ref, validator }
   setValue(v) {
