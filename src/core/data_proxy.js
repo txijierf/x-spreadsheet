@@ -13,7 +13,7 @@ import { Validations } from './validation';
 import { CellRange } from './cell_range';
 import { expr2xy, stringAt, xy2expr } from './alphabet';
 import { t } from '../locale/locale';
-import { GDCTValidators } from './gdct_validators';
+//import { GDCTValidators } from './gdct_validators';
 import { GDCTValidators2 } from './gdct_validators2';
 import { UnitValidation } from './unit_validation';
 // for conditional formatting
@@ -339,7 +339,7 @@ export default class DataProxy {
     this.rows = new Rows(this.settings.row);
     this.cols = new Cols(this.settings.col);
     this.validations = new Validations();
-    this.GDCTValidators = new GDCTValidators(this, spread);
+   // this.GDCTValidators = new GDCTValidators(this, spread);
     this.GDCTValidators2 = new GDCTValidators2(this,spread);
     this.UnitValidation = new UnitValidation(this,spread);
     this.variances = []; 
@@ -443,13 +443,13 @@ export default class DataProxy {
     this.GDCTValidators2.validateAll2();
   }
 
-  addTypeValidator(ri, ci, type) {
-    this.GDCTValidators.addTypeValidator(ri, ci, type)
-  }
+  // addTypeValidator(ri, ci, type) {
+  //   this.GDCTValidators.addTypeValidator(ri, ci, type)
+  // }
 
-  removeGDCTValidator(ri, ci) {
-    this.GDCTValidators.removeRule(ri, ci)
-  }
+  // removeGDCTValidator(ri, ci) {
+  //   this.GDCTValidators.removeRule(ri, ci)
+  // }
 
   // add greater Than conditional formatting
   addGreterThan(minRi, maxRi, minCi, maxCi, value, style){
@@ -1128,7 +1128,8 @@ export default class DataProxy {
     // validator
     
     //this.GDCTValidators.validateAll();
-    //this.GDCTValidators2.validateAll();
+    console.log("hi")
+    this.resetCommentsandErrors()
     validations.validate(ri, ci, text);
   }
 
